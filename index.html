@@ -49,7 +49,6 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;touch-
 .sopt .ic{font-size:22px;line-height:1}
 .sopt:disabled{opacity:.45}
 .backup{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
-.pwa .sopt[data-where="cloud"], .pwa #sHint{display:none}
 .badge.warn{color:#9a5b00;border-color:#ecd3a8;background:#fbf1de}
 .tabs{display:flex;gap:8px;padding:6px 28px 0;overflow-x:auto}
 .tab{padding:10px 16px 9px;border-radius:12px 12px 0 0;background:transparent;color:var(--muted);font-weight:500;
@@ -111,6 +110,7 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;touch-
 .size .dot{width:26px;height:26px;display:grid;place-items:center}
 .size .dot i{display:block;border-radius:50%;background:var(--ink)}
 .chk{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);padding:0 6px;white-space:nowrap}
+.chk .lvl{padding:3px 8px;border-radius:999px;background:#ece6da;color:var(--ink);font-weight:600;font-size:11px}
 .switch{width:38px;height:22px;border-radius:999px;background:#d9d2c5;position:relative;transition:.15s}
 .switch::after{content:"";position:absolute;left:2px;top:2px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.15s;box-shadow:0 1px 2px rgba(0,0,0,.2)}
 .switch.on{background:var(--ok)}
@@ -282,7 +282,7 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;touch-
 #toast.show{opacity:.94}
 </style>
 </head>
-<body class="pwa">
+<body>
 <div id="app">
 
 <section id="home">
@@ -330,6 +330,7 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;touch-
       <button class="chk" id="traceBtn"><span class="switch" id="traceSw"></span>따라쓰기</button>
       <button class="chk" id="testBtn"><span class="switch" id="testSw"></span>가리기</button>
       <button class="chk" id="pencilOnlyBtn"><span class="switch" id="pencilOnlySw"></span>펜슬만</button>
+      <button class="chk" id="pressBtn">필압 <span class="lvl" id="pressLvl">보통</span></button>
     </div>
     <div class="tgroup size">
       <span class="dot"><i id="sizeDot"></i></span>
@@ -392,7 +393,7 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;touch-
 <div class="modal" id="smodal" hidden>
   <div class="box wide">
     <h3>저장 위치 · 백업</h3>
-    <div class="lbl">필기와 '외웠어요' 기록은 이 아이패드 안에 저장돼요.</div>
+    <div class="lbl">필기와 '외웠어요' 기록을 어디에 저장할까요?</div>
     <div class="store-opt">
       <button class="sopt" data-where="device"><span class="ic">📱</span><span><b>이 아이패드에 저장</b>인터넷 없이도 이 기기 안에 저장돼요. 다른 기기에서는 보이지 않아요.</span></button>
       <button class="sopt" data-where="cloud"><span class="ic">☁︎</span><span><b>Claude 계정에 저장</b>다른 기기(아이패드·컴퓨터)에서도 이어서 볼 수 있어요.</span></button>
@@ -1519,10 +1520,6 @@ const Store = {
   where() { return lsGet("kj:where", "cloud"); },
   async init() {
     try { await IDB.open(); this.deviceOK = true; } catch (e) { this.deviceOK = false; }
-    if (window.__PWA__) {
-      try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
-      this.mode = this.deviceOK ? "device" : (lsSet("kj:probe", 1) ? "local" : "none"); return;
-    }
     try {
       for (let i = 0; i < 20 && !(window.claude && window.claude.use); i++) await sleep(100);
       if (window.claude && window.claude.use) {
@@ -1617,8 +1614,10 @@ let meta = { w: {}, l: {}, x: {} };            // w: hex -> {n, t}; l: hex -> 1
 const settings = Object.assign({
   tool: "pen", color: "#1d1b18",
   sizes: { pen: 4, pencil: 4, brush: 8, marker: 6, hl: 7, erase: 8, serase: 8 },
-  pencilOnly: true, paper: "grid", addType: "grid", trace: true, grade: "1", filter: "all", onKana: "hira", kunKana: "hira"
+  pencilOnly: true, paper: "grid", addType: "grid", trace: true, grade: "1", filter: "all", onKana: "hira", kunKana: "hira", pressure: 1
 }, lsGet("kj:settings", {}));
+const PRESS_LEVELS = [0.55, 1, 1.7];
+const PRESS_NAMES = ["약하게", "보통", "강하게"];
 function saveSettings() { lsSet("kj:settings", settings); }
 
 const TOOLS = {
@@ -1723,6 +1722,12 @@ function buildToolbar() {
   });
   $("sizeRange").addEventListener("input", e => { settings.sizes[settings.tool] = +e.target.value; saveSettings(); syncSizeDot(); });
   $("pencilOnlyBtn").addEventListener("click", () => { settings.pencilOnly = !settings.pencilOnly; saveSettings(); syncToolbar(); toast(settings.pencilOnly ? "펜슬로만 써져요. 손바닥이 닿아도 괜찮아요." : "손가락으로도 써져요."); });
+  $("pressBtn").addEventListener("click", () => {
+    let idx = PRESS_LEVELS.indexOf(settings.pressure); if (idx < 0) idx = 1;
+    idx = (idx + 1) % PRESS_LEVELS.length;
+    settings.pressure = PRESS_LEVELS[idx]; saveSettings(); syncToolbar();
+    toast("필압 민감도: " + PRESS_NAMES[idx]);
+  });
   $("undoBtn").addEventListener("click", undo);
   $("redoBtn").addEventListener("click", redo);
   $("clearBtn").addEventListener("click", async () => {
@@ -1743,6 +1748,7 @@ function syncToolbar() {
   document.querySelectorAll("#colorGroup .sw").forEach(b => b.classList.toggle("on", b.dataset.c === settings.color));
   $("sizeRange").value = settings.sizes[settings.tool] || 4;
   $("pencilOnlySw").classList.toggle("on", settings.pencilOnly);
+  { let pi = PRESS_LEVELS.indexOf(settings.pressure); if (pi < 0) pi = 1; $("pressLvl").textContent = PRESS_NAMES[pi]; }
   $("traceSw").classList.toggle("on", settings.trace);
   $("testSw").classList.toggle("on", P.test);
   $("undoBtn").disabled = !P.undo.length; $("redoBtn").disabled = !P.redo.length;
@@ -1918,8 +1924,11 @@ function toLogical(ev) {
   return [clamp((ev.clientX - rect.left) / rect.width * 1000, -20, 1020), clamp((ev.clientY - rect.top) / rect.height * 1000, -20, 1020)];
 }
 function pressureOf(ev) {
-  if (ev.pointerType === "pen") { const p = ev.pressure || 0; return clamp(p > 0 ? Math.pow(p, 0.8) : 0.5, 0.05, 1); }
-  return 0.5;
+  let p;
+  if (ev.pointerType === "pen") { const raw = ev.pressure || 0; p = raw > 0 ? Math.pow(raw, 0.8) : 0.5; }
+  else p = 0.5;
+  const s = settings.pressure || 1;
+  return clamp(0.5 + (p - 0.5) * s, 0.05, 1);
 }
 function distSeg(px, py, ax, ay, bx, by) {
   const dx = bx - ax, dy = by - ay, l = dx * dx + dy * dy;
@@ -2267,7 +2276,7 @@ $("bkExport").addEventListener("click", async () => {
     Object.keys(data).filter(isDataKey).forEach(k => keep[k] = data[k]);
     const d = new Date(), stamp = `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, "0")}${String(d.getDate()).padStart(2, "0")}`;
     await dl.save({ filename: `kanji-backup-${stamp}.json`, data: JSON.stringify({ app: "kanji-renshu", v: 1, at: d.toISOString(), data: keep }) });
-    toast("백업 파일을 만들었어요. ‘파일에 저장’을 골라 보관하세요.", 4000);
+    toast("백업 파일을 저장했어요");
   } catch (e) { if (!e || e.code !== "declined") toast("백업 파일을 만들지 못했어요.", 3500); }
 });
 $("bkImport").addEventListener("click", () => $("bkFile").click());
@@ -2511,11 +2520,11 @@ const ready = (async () => {
   else if (P.item) { syncLearn(); }
 })();
 route();
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (!$("home").hidden) renderGrid(); });
+})();
 if ("serviceWorker" in navigator && location.protocol !== "file:") {
   window.addEventListener("load", () => { navigator.serviceWorker.register("sw.js").catch(() => {}); });
 }
-if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (!$("home").hidden) renderGrid(); });
-})();
 </script>
 </body>
 </html>
