@@ -1,0 +1,2521 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="한자 연습장">
+<meta name="theme-color" content="#f3efe7">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<script>window.__PWA__ = true;</script>
+<title>한자 연습장</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f3efe7; --panel:#fbf9f4; --paper:#fffdf8; --ink:#25211c; --muted:#7b746a; --line:#e2dccf;
+  --accent:#c4473a; --accent-soft:#f6e3df; --ok:#2f7d5b; --ok-soft:#e1f0e8;
+  --grid:#e4a79e; --grid-soft:#f1cdc7;
+  --kfont:"Klee One", "Hiragino Mincho ProN", serif;
+  --ufont:"Noto Sans KR", -apple-system, system-ui, sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:var(--ufont);
+  -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;overscroll-behavior:none}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;touch-action:manipulation}
+[hidden]{display:none!important}
+#app{height:100dvh;display:flex;flex-direction:column;
+  padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+
+/* ---------- home ---------- */
+#home{flex:1;display:flex;flex-direction:column;min-height:0}
+.home-head{padding:22px 28px 10px;display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.home-head h1{margin:0;font-family:var(--kfont);font-weight:600;font-size:34px;letter-spacing:.02em}
+.home-head h1 small{font-family:var(--ufont);font-size:14px;font-weight:500;color:var(--muted);margin-left:10px;letter-spacing:0}
+.badge{margin-left:auto;font-size:12px;color:var(--muted);background:var(--panel);border:1px solid var(--line);
+  padding:5px 10px;border-radius:999px;white-space:nowrap}
+.badge.cloud{color:var(--ok);border-color:#bfdccc;background:var(--ok-soft)}
+.badge.dev{color:#2c4fa3;border-color:#c5d1ec;background:#eaf0fb}
+.store-opt{display:flex;flex-direction:column;gap:8px}
+.sopt{display:flex;gap:12px;align-items:flex-start;text-align:left;padding:12px 14px;border:2px solid var(--line);border-radius:12px;background:#fff}
+.sopt.on{border-color:var(--ink)}
+.sopt b{display:block;font-size:15px;margin-bottom:2px}
+.sopt span{font-size:13px;color:var(--muted);line-height:1.45}
+.sopt .ic{font-size:22px;line-height:1}
+.sopt:disabled{opacity:.45}
+.backup{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.pwa .sopt[data-where="cloud"], .pwa #sHint{display:none}
+.badge.warn{color:#9a5b00;border-color:#ecd3a8;background:#fbf1de}
+.tabs{display:flex;gap:8px;padding:6px 28px 0;overflow-x:auto}
+.tab{padding:10px 16px 9px;border-radius:12px 12px 0 0;background:transparent;color:var(--muted);font-weight:500;
+  white-space:nowrap;border:1px solid transparent;border-bottom:0}
+.tab b{font-family:var(--kfont);font-size:18px;margin-right:4px;color:inherit}
+.tab .pr{display:block;font-size:11px;font-weight:400;margin-top:2px}
+.tab.on{background:var(--panel);color:var(--ink);border-color:var(--line)}
+.home-body{flex:1;min-height:0;background:var(--panel);border-top:1px solid var(--line);display:flex;flex-direction:column}
+.home-bar{display:flex;align-items:center;gap:10px;padding:14px 28px;flex-wrap:wrap}
+.seg{display:inline-flex;background:#efeae0;border-radius:10px;padding:3px}
+.seg button{padding:7px 13px;border-radius:8px;font-size:14px;color:var(--muted)}
+.seg button.on{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.stat{font-size:14px;color:var(--muted)}
+.stat strong{color:var(--ink);font-weight:700}
+.btn{padding:9px 15px;border-radius:10px;background:#fff;border:1px solid var(--line);font-size:14px;font-weight:500}
+.btn.primary{background:var(--ink);color:#fff;border-color:var(--ink)}
+.btn.sm{padding:7px 11px;font-size:13px;white-space:nowrap}
+.vsep{width:1px;height:26px;background:var(--line);margin:0 4px}
+.spacer{flex:1}
+.grid{flex:1;overflow-y:auto;padding:4px 28px 40px;display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:10px;align-content:start;-webkit-overflow-scrolling:touch}
+.tile{position:relative;aspect-ratio:1;background:#fff;border:1px solid var(--line);border-radius:12px;
+  font-family:var(--kfont);font-size:36px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;line-height:1}
+.tile .ko{font-family:var(--ufont);font-size:11px;color:var(--muted);line-height:1.1;max-width:92%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tile:active{transform:scale(.96)}
+.tile .no{position:absolute;left:7px;top:5px;font-family:var(--ufont);font-size:10px;color:#b3ab9e}
+.tile.w::after{content:"";position:absolute;right:8px;top:8px;width:7px;height:7px;border-radius:50%;background:var(--accent)}
+.tile.l{background:var(--ok-soft);border-color:#bfdccc}
+.tile.x{box-shadow:inset 0 0 0 2px #efb6ae}
+.tile.l::before{content:"✓";position:absolute;right:6px;bottom:3px;font-family:var(--ufont);font-size:12px;color:var(--ok);font-weight:700}
+.empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:60px 0;font-size:15px}
+
+/* ---------- practice ---------- */
+#practice{flex:1;display:flex;flex-direction:column;min-height:0}
+.topbar{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--line);background:var(--panel)}
+.iconbtn{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;font-size:20px}
+.iconbtn:active{background:#ece6da}
+.iconbtn:disabled{opacity:.3}
+.ttl{display:flex;align-items:baseline;gap:10px;min-width:0}
+.ttl .k{font-family:var(--kfont);font-size:30px;font-weight:600;line-height:1}
+.ttl .meta{font-size:13px;color:var(--muted);white-space:nowrap}
+.status{font-size:12px;color:var(--muted);white-space:nowrap}
+.status.err{color:var(--accent)}
+.toolbar{display:flex;align-items:center;gap:6px 4px;padding:6px 12px;border-bottom:1px solid var(--line);
+  background:var(--panel);flex-wrap:wrap}
+.toolbar::-webkit-scrollbar{display:none}
+.tgroup{display:flex;align-items:center;gap:4px;padding:0 6px;border-right:1px solid var(--line)}
+.tgroup:last-child{border-right:0}
+.tool{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  min-width:48px;height:50px;padding:0 5px;border-radius:10px;font-size:12px;color:var(--muted);white-space:nowrap}
+.tool svg{width:22px;height:22px}
+.tool.on{background:#fff;color:var(--ink);box-shadow:0 0 0 1px var(--line),0 1px 3px rgba(0,0,0,.06)}
+.tool .tip{position:absolute;bottom:4px;width:16px;height:3px;border-radius:2px;background:transparent}
+.tool.on .tip{background:var(--cur)}
+.sw{width:28px;height:28px;flex:none;border-radius:50%;border:3px solid transparent;box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)}
+.sw.on{border-color:#fff;box-shadow:0 0 0 2px var(--ink)}
+.size{display:flex;align-items:center;gap:8px;padding:0 4px}
+.size input{width:90px;accent-color:var(--ink)}
+.size .dot{width:26px;height:26px;display:grid;place-items:center}
+.size .dot i{display:block;border-radius:50%;background:var(--ink)}
+.chk{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);padding:0 6px;white-space:nowrap}
+.switch{width:38px;height:22px;border-radius:999px;background:#d9d2c5;position:relative;transition:.15s}
+.switch::after{content:"";position:absolute;left:2px;top:2px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.15s;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.switch.on{background:var(--ok)}
+.switch.on::after{left:18px}
+
+.work{flex:1;min-height:0;display:flex}
+.side{width:310px;flex:none;padding:16px;display:flex;flex-direction:column;gap:14px;border-right:1px solid var(--line);
+  background:var(--panel);overflow-y:auto}
+.model{position:relative;aspect-ratio:1;background:#fff;border:2px solid var(--grid);border-radius:6px;display:grid;place-items:center}
+.model::before,.model::after{content:"";position:absolute;background:none}
+.model::before{left:50%;top:0;bottom:0;border-left:1.5px dashed var(--grid-soft)}
+.model::after{top:50%;left:0;right:0;border-top:1.5px dashed var(--grid-soft)}
+.model span{position:relative;z-index:1;font-family:var(--kfont);font-weight:600;font-size:150px;line-height:1}
+.model.hide span{visibility:hidden}
+.model .cover{position:absolute;inset:0;z-index:2;display:grid;place-items:center;color:var(--muted);font-size:13px}
+.row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.kofull{text-align:center;font-size:17px;font-weight:700;margin-top:-4px}
+.info{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:10px;font-size:14px}
+.info .sec{position:relative}
+.info .h{font-size:11px;color:var(--muted);margin-bottom:5px;letter-spacing:.02em;display:flex;align-items:center;justify-content:space-between;gap:6px}
+.info .h em{font-style:normal;color:#b3ab9e}
+.kseg{display:inline-flex;background:#efeae0;border-radius:7px;padding:2px;flex:none}
+.kseg button{font-family:var(--kfont);font-size:12px;padding:3px 7px;border-radius:5px;color:var(--muted)}
+.kseg button.on{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08);font-weight:600}
+.info .rd{display:flex;flex-wrap:wrap;gap:5px}
+.info .rd span{font-family:var(--kfont);font-size:17px;font-weight:600;background:#f6f2ea;border-radius:6px;padding:2px 7px;line-height:1.35}
+.info .rd span i{font-style:normal;color:#b0a797;font-weight:400}
+.info .rd.on span{background:var(--accent-soft);color:#8f2f25}
+.info .none{color:#b3ab9e;font-size:13px}
+.info .w{font-family:var(--kfont);font-size:22px;font-weight:600;line-height:1.2}
+.info .w small{font-family:var(--kfont);font-size:14px;color:var(--muted);font-weight:400;margin-left:6px}
+.info .wk{color:var(--muted);font-size:13px;margin-top:2px}
+.info .s{font-family:var(--kfont);font-size:17px;line-height:1.6}
+.info .s b{color:var(--accent);font-weight:600}
+.info .sk{color:#4a443c;font-size:14px;margin-top:4px;background:#f6f2ea;border-radius:6px;padding:5px 8px;line-height:1.45}
+.info .wk{color:#4a443c}
+.info .vwrap{position:relative;min-height:30px}
+.info .veil{position:absolute;inset:0;background:repeating-linear-gradient(45deg,#f4efe6,#f4efe6 6px,#efe9de 6px,#efe9de 12px);
+  border-radius:8px;display:grid;place-items:center;font-size:12px;color:var(--muted);border:1px dashed #d9d0c0}
+.info .sec.hidden .body{visibility:hidden}
+.lbl{font-size:12px;color:var(--muted);margin-bottom:6px}
+.learn{width:100%;padding:11px;border-radius:10px;border:1px solid var(--line);background:#fff;font-weight:500;font-size:14px}
+.learn.on{background:var(--ok);border-color:var(--ok);color:#fff}
+.pages{display:flex;align-items:center;gap:6px}
+.pages .pn{font-size:14px;min-width:54px;text-align:center}
+.stage{flex:1;min-width:0;display:grid;place-items:center;padding:14px;position:relative}
+.paper{position:relative;background:var(--paper);box-shadow:0 1px 2px rgba(0,0,0,.06),0 8px 28px rgba(60,40,20,.10);border-radius:4px}
+.paper svg,.paper canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.paper canvas{touch-action:none}
+.paper .loading{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);font-size:14px;background:rgba(255,253,248,.7)}
+
+@media (orientation:portrait){
+  .work{flex-direction:column}
+  .side{width:auto;flex-direction:row;align-items:stretch;border-right:0;border-bottom:1px solid var(--line);padding:12px 16px;gap:16px;overflow-x:auto}
+  .model{height:150px;width:150px;flex:none}
+  .side .mcol{display:flex;flex-direction:column;gap:8px;flex:none;width:150px}
+  .info{flex:1;min-width:0;display:grid;grid-template-columns:1fr 1.3fr;gap:10px 18px;align-content:start}
+  .side .mcol .mtext{align-items:center}
+  .model span{font-size:110px}
+  .side .col{display:flex;flex-direction:column;gap:10px;min-width:200px}
+  .side .col .row{gap:4px 12px}
+}
+@media (orientation:landscape){
+  .side .col{display:flex;flex-direction:column;gap:14px}
+  .side .mcol{display:flex;align-items:center;gap:14px}
+  .side .mcol .model{width:110px;flex:none}
+  .side .mcol .model span{font-size:84px}
+  .side .mcol .kofull{font-size:19px;text-align:left;margin:0}
+  .side{gap:12px;padding:14px}
+}
+.right{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column}
+.right .stage{flex:1;min-height:0}
+.pbar{display:flex;align-items:center;gap:8px 10px;padding:8px 14px;border-top:1px solid var(--line);background:var(--panel);flex-wrap:wrap}
+.pbar .plist{flex:1 1 100%;flex-wrap:wrap}
+.pbar .spacer{display:none}
+.pbar #pgDel{margin-left:auto}
+.pbar::-webkit-scrollbar{display:none}
+.plist{display:flex;gap:6px;flex:none}
+.pitem.add{border:1.5px dashed #cfc5b4;color:var(--muted);font-weight:500}
+.pitem.add .n{background:transparent;font-size:16px}
+.addsel{display:flex;align-items:center;gap:6px;white-space:nowrap;flex:none}
+.albl{font-size:12px;color:var(--muted)}
+.seg.dark button{padding:7px 12px;font-size:13px;white-space:nowrap}
+.seg.dark button.on{background:var(--ink);color:#fff}
+.mtext{display:flex;flex-direction:column;gap:8px;flex:1;min-width:0}
+.lseg{display:flex}
+.learnchk{display:flex;align-items:center;gap:10px;width:100%;min-height:46px;padding:8px 12px;border-radius:12px;border:1.5px solid var(--line);background:#fff;font-size:14px;font-weight:600;color:var(--muted);touch-action:manipulation;cursor:pointer}
+.learnchk.on{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.learnchk .switch{flex:none;pointer-events:none}
+.learnchk #learnTxt{pointer-events:none}
+.lseg button{flex:1;min-height:42px;padding:8px 8px;font-size:14px;white-space:nowrap;cursor:pointer;touch-action:manipulation}
+.lseg button.on[data-l="1"]{background:var(--ok);color:#fff}
+.lseg button.on[data-l="0"]{background:#fff;color:var(--ink)}
+.pitem{display:flex;align-items:center;gap:7px;padding:6px 11px 6px 7px;border-radius:999px;border:1px solid var(--line);background:#f6f2ea;font-size:13px;white-space:nowrap;flex:none}
+.pitem .n{width:22px;height:22px;border-radius:50%;background:#ece6da;display:grid;place-items:center;font-size:12px;color:var(--muted);flex:none}
+.pitem .dot{width:7px;height:7px;border-radius:50%;background:var(--accent)}
+.pitem.on{background:var(--ink);border-color:var(--ink);color:#fff;font-weight:700}
+.pitem.on .dot{background:#ffb4aa}
+.pitem.on .n{background:#fff;color:var(--ink)}
+.stage{touch-action:none}
+.snav{position:absolute;top:50%;transform:translateY(-50%);z-index:3;width:44px;height:72px;border-radius:12px;font-size:30px;color:var(--muted);left:6px;background:rgba(255,255,255,.55)}
+.snav.r{left:auto;right:6px}
+.snav:disabled{opacity:0;pointer-events:none}
+
+
+
+/* ---------- modal / toast ---------- */
+.modal{position:fixed;inset:0;background:rgba(30,25,20,.35);display:grid;place-items:center;z-index:50}
+.modal .box{background:#fff;border-radius:16px;padding:22px;width:min(340px,86vw);box-shadow:0 20px 50px rgba(0,0,0,.2)}
+.modal p{margin:0 0 18px;font-size:15px;line-height:1.5}
+.modal .row{justify-content:flex-end}
+.btn.danger{background:var(--accent);border-color:var(--accent);color:#fff}
+.modal .box.wide{width:min(560px,92vw)}
+.modal h3{margin:0 0 14px;font-size:19px}
+.modal .lbl{margin-top:12px}
+.seg.qs{display:flex;flex-wrap:wrap}
+.seg.qs button{flex:1;white-space:nowrap}
+.qhint{font-size:13px;color:var(--muted);margin:8px 0 0!important;line-height:1.5}
+#qsHint{margin:14px 0 16px!important}
+#quiz{flex:1;display:flex;flex-direction:column;min-height:0}
+.qscore{font-size:15px;font-weight:700}
+.qbar{height:4px;background:#e7e0d3}
+.qbar i{display:block;height:100%;background:var(--ok);width:0;transition:width .25s}
+.qbody{flex:1;min-height:0;overflow-y:auto;padding:24px;display:flex;flex-direction:column;align-items:center}
+.qcard{width:min(720px,100%);display:flex;flex-direction:column;align-items:center;gap:16px}
+.qask{font-size:15px;color:var(--muted)}
+.qprompt{font-family:var(--kfont);font-weight:600;font-size:110px;line-height:1.1;text-align:center}
+.qprompt.ko{font-family:var(--ufont);font-size:44px;font-weight:700}
+.qprompt.word{font-size:84px}
+.qprompt i{font-style:normal;color:#9d9486}
+.qchoices{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%}
+.qch{background:#fff;border:2px solid var(--line);border-radius:14px;padding:18px 10px;font-family:var(--kfont);font-size:30px;font-weight:600;min-height:84px}
+.qch.big{font-size:52px}
+.qch:active{transform:scale(.98)}
+.qch.ok{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.qch.ng{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.qch:disabled{opacity:1}
+.qexp{width:100%;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 16px;font-size:15px;line-height:1.7}
+.qexp .kk{font-family:var(--kfont);font-size:30px;font-weight:600;margin-right:8px;vertical-align:middle}
+.qexp .jp{font-family:var(--kfont);font-size:17px}
+.qverdict{font-size:20px;font-weight:700}
+.qverdict.ok{color:var(--ok)} .qverdict.ng{color:var(--accent)}
+.qwrite{display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap;justify-content:center;width:100%}
+.qcard.w{width:min(900px,100%)}
+.qclue{display:flex;flex-direction:column;gap:10px;width:300px;flex:none}
+.qclue .qexp{font-size:13px;line-height:1.6;padding:10px 12px}
+.qclue .qexp .kk{font-size:24px}
+.qover{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--kfont);font-weight:600;color:#c4473a;opacity:.28;line-height:1;pointer-events:none;z-index:2}
+.qclue .ko{font-size:34px;font-weight:700}
+.qclue .wd{font-family:var(--kfont);font-size:30px;font-weight:600}
+.qclue .wd small{font-size:16px;color:var(--muted);font-weight:400;margin-left:6px}
+.qclue .sk{color:var(--muted);font-size:14px;line-height:1.5}
+.qpadwrap{display:flex;flex-direction:column;gap:10px;align-items:center}
+.qpad{position:relative;background:var(--paper);border:3px solid var(--grid);border-radius:6px;box-shadow:0 6px 20px rgba(60,40,20,.08)}
+.qpad::before{content:"";position:absolute;left:50%;top:0;bottom:0;border-left:2px dashed var(--grid-soft)}
+.qpad::after{content:"";position:absolute;top:50%;left:0;right:0;border-top:2px dashed var(--grid-soft)}
+.qpad canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;z-index:1}
+.qans{font-family:var(--kfont);font-weight:600;font-size:150px;line-height:1;text-align:center}
+.qres{width:min(720px,100%);display:flex;flex-direction:column;align-items:center;gap:18px}
+.qres .big{font-size:56px;font-weight:700}
+.qres .grid2{display:grid;grid-template-columns:repeat(auto-fill,minmax(74px,1fr));gap:8px;width:100%}
+.qres .t{position:relative;aspect-ratio:1;background:#fff;border:2px solid var(--line);border-radius:12px;font-family:var(--kfont);font-size:34px;display:grid;place-items:center}
+.qres .t.ok{border-color:#bfdccc;background:var(--ok-soft)}
+.qres .t.ng{border-color:#efb6ae;background:var(--accent-soft)}
+.qres .t span{position:absolute;right:6px;top:3px;font-family:var(--ufont);font-size:12px;font-weight:700}
+#toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%);
+  background:var(--ink);color:#fff;font-size:14px;padding:10px 16px;border-radius:10px;z-index:60;
+  opacity:0;pointer-events:none;transition:opacity .2s;max-width:86vw;text-align:center}
+#toast.show{opacity:.94}
+</style>
+</head>
+<body class="pwa">
+<div id="app">
+
+<section id="home">
+  <div class="home-head">
+    <h1>漢字れんしゅう帳<small>일본 초등 교육한자 1,026자</small></h1>
+    <button class="badge" id="storeBadge">불러오는 중…</button>
+  </div>
+  <div class="tabs" id="tabs"></div>
+  <div class="home-body">
+    <div class="home-bar">
+      <div class="seg" id="filters">
+        <button data-f="all" class="on">전체</button>
+        <button data-f="todo">아직</button>
+        <button data-f="written">쓴 글자</button>
+        <button data-f="learned">외운 글자</button>
+        <button data-f="wrong">틀린 글자</button>
+      </div>
+      <span class="stat" id="gradeStat"></span>
+      <span class="spacer"></span>
+      <button class="btn" id="randomBtn">무작위 연습</button>
+      <button class="btn primary" id="testOpen">✎ 테스트 보기</button>
+    </div>
+    <div class="grid" id="grid"></div>
+  </div>
+</section>
+
+<section id="practice" hidden>
+  <div class="topbar">
+    <button class="iconbtn" id="backBtn" aria-label="목록으로">‹</button>
+    <div class="ttl"><span class="k" id="pK"></span><span class="meta" id="pMeta"></span></div>
+    <span class="spacer"></span>
+    <span class="status" id="saveStatus"></span>
+    <button class="iconbtn" id="imgBtn" aria-label="이 페이지를 이미지로 저장" title="이미지로 저장"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-9 9"/></svg></button>
+      <button class="iconbtn" id="undoBtn" aria-label="실행 취소"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button>
+      <button class="iconbtn" id="redoBtn" aria-label="다시 실행"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg></button>
+      <button class="iconbtn" id="clearBtn" aria-label="페이지 지우기"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M6 6l1 14h10l1-14"/></svg></button>
+    <span class="vsep"></span>
+    <button class="iconbtn" id="prevBtn" aria-label="이전 한자">←</button>
+    <button class="iconbtn" id="nextBtn" aria-label="다음 한자">→</button>
+  </div>
+  <div class="toolbar">
+    <div class="tgroup" id="toolGroup"></div>
+    <div class="tgroup" id="colorGroup"></div>
+    <div class="tgroup">
+      <button class="chk" id="traceBtn"><span class="switch" id="traceSw"></span>따라쓰기</button>
+      <button class="chk" id="testBtn"><span class="switch" id="testSw"></span>가리기</button>
+      <button class="chk" id="pencilOnlyBtn"><span class="switch" id="pencilOnlySw"></span>펜슬만</button>
+    </div>
+    <div class="tgroup size">
+      <span class="dot"><i id="sizeDot"></i></span>
+      <input type="range" id="sizeRange" min="1" max="20" step="1">
+    </div>
+  </div>
+  <div class="work">
+    <aside class="side">
+      <div class="mcol"><div class="model" id="model"><span id="modelK"></span></div>
+        <div class="mtext"><div class="kofull" id="koText"></div><button class="learnchk" id="learnChk" type="button"><span class="switch" id="learnSw"></span><span id="learnTxt">외웠어요</span></button></div></div>
+      <div class="info" id="info"></div>
+    </aside>
+    <div class="right">
+    <div class="stage" id="stage">
+      <button class="snav" id="pgPrev" aria-label="이전 페이지">‹</button>
+      <button class="snav r" id="pgNext" aria-label="다음 페이지">›</button>
+      <div class="paper" id="paper">
+        <svg id="paperSvg" viewBox="0 0 1000 1000" preserveAspectRatio="none"></svg>
+        <canvas id="mainCv"></canvas>
+        <canvas id="liveCv"></canvas>
+        <div class="loading" id="paperLoading" hidden>불러오는 중…</div>
+      </div>
+    </div>
+    <div class="pbar">
+      <div class="plist" id="plist"></div>
+      <span class="spacer"></span>
+      <span class="addsel"><span class="albl">끝에서 밀면 추가:</span><span class="seg dark" id="addSeg"><button data-addtype="grid">연습 칸</button><button data-addtype="lines">줄 노트</button></span></span>
+      <button class="btn sm" id="pgDel">이 페이지 삭제</button>
+    </div>
+    </div>
+  </div>
+</section>
+
+<section id="quiz" hidden>
+  <div class="topbar">
+    <button class="iconbtn" id="qBack" aria-label="그만하기">‹</button>
+    <div class="ttl"><span class="k" id="qTitle" style="font-size:22px">테스트</span><span class="meta" id="qMeta"></span></div>
+    <span class="spacer"></span>
+    <span class="qscore" id="qScore"></span>
+  </div>
+  <div class="qbar"><i id="qProg"></i></div>
+  <div class="qbody" id="qBody"></div>
+</section>
+
+<div class="modal" id="qsetup" hidden>
+  <div class="box wide">
+    <h3 id="qsTitle">테스트 보기</h3>
+    <div class="lbl">종류</div>
+    <div class="seg qs" data-q="type"><button data-v="read">읽기 퀴즈 · 4지선다</button><button data-v="write">쓰기 시험 · 펜슬</button></div>
+    <p class="qhint" id="qsTypeHint"></p>
+    <div class="lbl">범위</div>
+    <div class="seg qs" data-q="range"><button data-v="all">전체</button><button data-v="todo">못 외운 것</button><button data-v="wrong">틀렸던 것</button><button data-v="learned">외운 것</button></div>
+    <div class="lbl">문제 수</div>
+    <div class="seg qs" data-q="count"><button data-v="10">10</button><button data-v="20">20</button><button data-v="30">30</button><button data-v="0">전부</button></div>
+    <p class="qhint" id="qsHint"></p>
+    <div class="row"><button class="btn" id="qsNo">취소</button><button class="btn primary" id="qsGo">시작하기</button></div>
+  </div>
+</div>
+
+<div class="modal" id="smodal" hidden>
+  <div class="box wide">
+    <h3>저장 위치 · 백업</h3>
+    <div class="lbl">필기와 '외웠어요' 기록은 이 아이패드 안에 저장돼요.</div>
+    <div class="store-opt">
+      <button class="sopt" data-where="device"><span class="ic">📱</span><span><b>이 아이패드에 저장</b>인터넷 없이도 이 기기 안에 저장돼요. 다른 기기에서는 보이지 않아요.</span></button>
+      <button class="sopt" data-where="cloud"><span class="ic">☁︎</span><span><b>Claude 계정에 저장</b>다른 기기(아이패드·컴퓨터)에서도 이어서 볼 수 있어요.</span></button>
+    </div>
+    <p class="qhint" id="sHint">위치를 바꾸면 지금까지의 기록이 새 위치로 복사돼요.</p>
+    <div class="lbl" style="margin-top:16px">백업 파일 (아이패드 ‘파일’ 앱에 저장)</div>
+    <div class="backup"><button class="btn" id="bkExport">⬇︎ 백업 파일 만들기</button><button class="btn" id="bkImport">⬆︎ 백업 파일 불러오기</button>
+      <input type="file" id="bkFile" accept=".json,application/json" hidden></div>
+    <p class="qhint">아이패드 브라우저는 오래 쓰지 않은 사이트의 저장 공간을 지울 때가 있어요. 가끔 백업 파일을 만들어 두면 안전해요.</p>
+    <div class="row" style="justify-content:flex-end;margin-top:14px"><button class="btn primary" id="sClose">닫기</button></div>
+  </div>
+</div>
+
+<div class="modal" id="modal" hidden>
+  <div class="box"><p id="modalText"></p>
+    <div class="row"><button class="btn" id="modalNo">취소</button><button class="btn danger" id="modalYes">확인</button></div>
+  </div>
+</div>
+<div id="toast"></div>
+</div>
+
+<script>
+(function(){
+"use strict";
+/* ================= data ================= */
+const GRADES = {"1": "一右雨円王音下火花貝学気九休玉金空月犬見五口校左三山子四糸字耳七車手十出女小上森人水正生青夕石赤千川先早草足村大男竹中虫町天田土二日入年白八百文木本名目立力林六", "2": "引羽雲園遠何科夏家歌画回会海絵外角楽活間丸岩顔汽記帰弓牛魚京強教近兄形計元言原戸古午後語工公広交光考行高黄合谷国黒今才細作算止市矢姉思紙寺自時室社弱首秋週春書少場色食心新親図数西声星晴切雪船線前組走多太体台地池知茶昼長鳥朝直通弟店点電刀冬当東答頭同道読内南肉馬売買麦半番父風分聞米歩母方北毎妹万明鳴毛門夜野友用曜来里理話", "3": "悪安暗医委意育員院飲運泳駅央横屋温化荷界開階寒感漢館岸起期客究急級宮球去橋業曲局銀区苦具君係軽血決研県庫湖向幸港号根祭皿仕死使始指歯詩次事持式実写者主守取酒受州拾終習集住重宿所暑助昭消商章勝乗植申身神真深進世整昔全相送想息速族他打対待代第題炭短談着注柱丁帳調追定庭笛鉄転都度投豆島湯登等動童農波配倍箱畑発反坂板皮悲美鼻筆氷表秒病品負部服福物平返勉放味命面問役薬由油有遊予羊洋葉陽様落流旅両緑礼列練路和", "4": "愛案以衣位茨印英栄媛塩岡億加果貨課芽賀改械害街各覚潟完官管関観願岐希季旗器機議求泣給挙漁共協鏡競極熊訓軍郡群径景芸欠結建健験固功好香候康佐差菜最埼材崎昨札刷察参産散残氏司試児治滋辞鹿失借種周祝順初松笑唱焼照城縄臣信井成省清静席積折節説浅戦選然争倉巣束側続卒孫帯隊達単置仲沖兆低底的典伝徒努灯働特徳栃奈梨熱念敗梅博阪飯飛必票標不夫付府阜富副兵別辺変便包法望牧末満未民無約勇要養浴利陸良料量輪類令冷例連老労録", "5": "圧囲移因永営衛易益液演応往桜可仮価河過快解格確額刊幹慣眼紀基寄規喜技義逆久旧救居許境均禁句型経潔件険検限現減故個護効厚耕航鉱構興講告混査再災妻採際在財罪殺雑酸賛士支史志枝師資飼示似識質舎謝授修述術準序招証象賞条状常情織職制性政勢精製税責績接設絶祖素総造像増則測属率損貸態団断築貯張停提程適統堂銅導得毒独任燃能破犯判版比肥非費備評貧布婦武復複仏粉編弁保墓報豊防貿暴脈務夢迷綿輸余容略留領歴", "6": "胃異遺域宇映延沿恩我灰拡革閣割株干巻看簡危机揮貴疑吸供胸郷勤筋系敬警劇激穴券絹権憲源厳己呼誤后孝皇紅降鋼刻穀骨困砂座済裁策冊蚕至私姿視詞誌磁射捨尺若樹収宗就衆従縦縮熟純処署諸除承将傷障蒸針仁垂推寸盛聖誠舌宣専泉洗染銭善奏窓創装層操蔵臓存尊退宅担探誕段暖値宙忠著庁頂腸潮賃痛敵展討党糖届難乳認納脳派拝背肺俳班晩否批秘俵腹奮並陛閉片補暮宝訪亡忘棒枚幕密盟模訳郵優預幼欲翌乱卵覧裏律臨朗論"};
+const RAW = `一|イチ・イツ|ひと・ひと(つ)|한 일|一つ|ひとつ|하나|りんごを 一つ ください。|사과를 하나 주세요.
+右|ウ・ユウ|みぎ|오른 우|右手|みぎて|오른손|右手を あげて ください。|오른손을 들어 주세요.
+雨|ウ|あめ・あま|비 우|雨|あめ|비|きょうは 雨が ふって います。|오늘은 비가 오고 있어요.
+円|エン|まる(い)|둥글 원|百円|ひゃくえん|100엔|この ノートは 百円です。|이 공책은 100엔이에요.
+王|オウ||임금 왕|王さま|おうさま|임금님|王さまは おしろに すんで います。|임금님은 성에 살고 있어요.
+音|オン・イン|おと・ね|소리 음|音|おと|소리|へんな 音が きこえます。|이상한 소리가 들려요.
+下|カ・ゲ|した・しも・もと・さ(げる)・さ(がる)・くだ(る)・くだ(さる)・お(ろす)・お(りる)|아래 하|下|した|아래|ねこが つくえの 下に います。|고양이가 책상 아래에 있어요.
+火|カ|ひ・ほ|불 화|火|ひ|불|火に ちかづかないで ください。|불에 가까이 가지 마세요.
+花|カ|はな|꽃 화|花|はな|꽃|にわに きれいな 花が さいて います。|정원에 예쁜 꽃이 피어 있어요.
+貝||かい|조개 패|貝|かい|조개|うみで 貝を ひろいました。|바다에서 조개를 주웠어요.
+学|ガク|まな(ぶ)|배울 학|学校|がっこう|학교|まいにち 学校へ いきます。|매일 학교에 가요.
+気|キ・ケ||기운 기|元気|げんき|건강함, 기운참|おばあちゃんは とても 元気です。|할머니는 아주 건강하세요.
+九|キュウ・ク|ここの・ここの(つ)|아홉 구|九つ|ここのつ|아홉 개|あめを 九つ もらいました。|사탕을 아홉 개 받았어요.
+休|キュウ|やす(む)・やす(まる)・やす(める)|쉴 휴|休む|やすむ|쉬다|つかれたので すこし 休みます。|피곤해서 조금 쉴게요.
+玉|ギョク|たま|구슬 옥|ビー玉|ビーだま|유리구슬|おとうとと ビー玉で あそびました。|남동생과 유리구슬로 놀았어요.
+金|キン・コン|かね・かな|쇠 금, 성 김|お金|おかね|돈|お金を たいせつに つかいましょう。|돈을 소중히 씁시다.
+空|クウ|そら・あ(く)・あ(ける)・から|빌 공|空|そら|하늘|空が とても あおいです。|하늘이 아주 파래요.
+月|ゲツ・ガツ|つき|달 월|月|つき|달|こんやは 月が きれいです。|오늘 밤은 달이 예뻐요.
+犬|ケン|いぬ|개 견|犬|いぬ|개|うちには しろい 犬が います。|우리 집에는 하얀 개가 있어요.
+見|ケン|み(る)・み(える)・み(せる)|볼 견|見る|みる|보다|いっしょに テレビを 見ましょう。|같이 텔레비전을 봐요.
+五|ゴ|いつ・いつ(つ)|다섯 오|五つ|いつつ|다섯 개|みかんが 五つ あります。|귤이 다섯 개 있어요.
+口|コウ・ク|くち|입 구|口|くち|입|口を おおきく あけて ください。|입을 크게 벌려 주세요.
+校|コウ||학교 교|校長|こうちょう|교장|校長せんせいの はなしを ききました。|교장 선생님의 말씀을 들었어요.
+左|サ|ひだり|왼 좌|左|ひだり|왼쪽|つぎの かどを 左に まがって ください。|다음 모퉁이에서 왼쪽으로 돌아 주세요.
+三|サン|み・み(つ)・みっ(つ)|석 삼|三つ|みっつ|세 개|ケーキを 三つ かいました。|케이크를 세 개 샀어요.
+山|サン|やま|메 산|山|やま|산|なつやすみに 山へ のぼりました。|여름방학에 산에 올랐어요.
+子|シ・ス|こ|아들 자|子ども|こども|아이|こうえんで 子どもが あそんで います。|공원에서 아이들이 놀고 있어요.
+四|シ|よ・よ(つ)・よっ(つ)・よん|넉 사|四つ|よっつ|네 개|いすが 四つ あります。|의자가 네 개 있어요.
+糸|シ|いと|실 사|糸|いと|실|はりに 糸を とおします。|바늘에 실을 꿰어요.
+字|ジ|あざ|글자 자|字|じ|글자|あの こは 字が とても じょうずです。|저 아이는 글씨를 아주 잘 써요.
+耳|ジ|みみ|귀 이|耳|みみ|귀|うさぎの 耳は ながいです。|토끼의 귀는 길어요.
+七|シチ|なな・なな(つ)・なの|일곱 칠|七つ|ななつ|일곱 개|にじには 七つの いろが あります。|무지개에는 일곱 가지 색이 있어요.
+車|シャ|くるま|수레 차|車|くるま|자동차|ちちは あかい 車に のって います。|아버지는 빨간 자동차를 타요.
+手|シュ|て・た|손 수|手|て|손|ごはんの まえに 手を あらいます。|밥 먹기 전에 손을 씻어요.
+十|ジュウ・ジッ|とお・と|열 십|十|じゅう|열(10)|十まで かぞえて ください。|10까지 세어 주세요.
+出|シュツ・スイ|で(る)・だ(す)|날 출|出る|でる|나가다|八じに いえを 出ます。|8시에 집을 나서요.
+女|ジョ・ニョ・ニョウ|おんな・め|여자 녀|女の子|おんなのこ|여자아이|女の子が うたを うたって います。|여자아이가 노래를 부르고 있어요.
+小|ショウ|ちい(さい)・こ・お|작을 소|小さい|ちいさい|작다|小さい ねこを ひろいました。|작은 고양이를 주웠어요.
+上|ジョウ・ショウ|うえ・うわ・かみ・あ(げる)・あ(がる)・のぼ(る)|윗 상|上|うえ|위|つくえの 上に ほんが あります。|책상 위에 책이 있어요.
+森|シン|もり|수풀 삼|森|もり|숲|森の なかで とりが ないて います。|숲속에서 새가 울고 있어요.
+人|ジン・ニン|ひと|사람 인|人|ひと|사람|あの 人は だれですか。|저 사람은 누구예요?
+水|スイ|みず|물 수|水|みず|물|つめたい 水を のみたいです。|차가운 물을 마시고 싶어요.
+正|セイ・ショウ|ただ(しい)・ただ(す)・まさ|바를 정|正しい|ただしい|옳다, 바르다|正しい こたえを えらんで ください。|맞는 답을 골라 주세요.
+生|セイ・ショウ|い(きる)・い(かす)・う(まれる)・う(む)・は(える)・は(やす)・き・なま|날 생|先生|せんせい|선생님|先生に しつもんを しました。|선생님께 질문했어요.
+青|セイ・ショウ|あお・あお(い)|푸를 청|青い|あおい|파랗다|青い ふくを きて います。|파란 옷을 입고 있어요.
+夕|セキ|ゆう|저녁 석|夕がた|ゆうがた|저녁 무렵|夕がたに いえへ かえります。|저녁 무렵에 집에 돌아가요.
+石|セキ・シャク・コク|いし|돌 석|石|いし|돌|かわで まるい 石を みつけました。|강에서 둥근 돌을 찾았어요.
+赤|セキ・シャク|あか・あか(い)・あか(らむ)・あか(らめる)|붉을 적|赤い|あかい|빨갛다|赤い りんごを たべました。|빨간 사과를 먹었어요.
+千|セン|ち|일천 천|千円|せんえん|천 엔|この ほんは 千円です。|이 책은 천 엔이에요.
+川|セン|かわ|내 천|川|かわ|강, 시내|川で さかなを つりました。|강에서 물고기를 낚았어요.
+先|セン|さき|먼저 선|先に|さきに|먼저|先に たべて ください。|먼저 드세요.
+早|ソウ・サッ|はや(い)・はや(まる)・はや(める)|이를 조|早い|はやい|이르다, 빠르다|あさ 早く おきました。|아침 일찍 일어났어요.
+草|ソウ|くさ|풀 초|草|くさ|풀|うさぎが 草を たべて います。|토끼가 풀을 먹고 있어요.
+足|ソク|あし・た(りる)・た(る)・た(す)|발 족|足|あし|발, 다리|たくさん あるいて 足が いたいです。|많이 걸어서 다리가 아파요.
+村|ソン|むら|마을 촌|村|むら|마을|おじいさんは ちいさな 村に すんで います。|할아버지는 작은 마을에 살고 계세요.
+大|ダイ・タイ|おお・おお(きい)・おお(いに)|큰 대|大きい|おおきい|크다|ぞうは とても 大きいです。|코끼리는 아주 커요.
+男|ダン・ナン|おとこ|사내 남|男の子|おとこのこ|남자아이|男の子が サッカーを して います。|남자아이가 축구를 하고 있어요.
+竹|チク|たけ|대 죽|竹|たけ|대나무|この はしは 竹で できて います。|이 젓가락은 대나무로 만들어졌어요.
+中|チュウ・ジュウ|なか|가운데 중|中|なか|안, 속|はこの 中に なにが ありますか。|상자 안에 뭐가 있어요?
+虫|チュウ|むし|벌레 충|虫|むし|벌레|にわで 虫を つかまえました。|정원에서 벌레를 잡았어요.
+町|チョウ|まち|밭두둑 정 (일본어: 동네)|町|まち|동네, 마을|この 町は しずかです。|이 동네는 조용해요.
+天|テン|あめ・あま|하늘 천|天気|てんき|날씨|きょうは いい 天気ですね。|오늘은 날씨가 좋네요.
+田|デン|た|밭 전|田んぼ|たんぼ|논|田んぼで おこめを つくります。|논에서 쌀을 만들어요.
+土|ド・ト|つち|흙 토|土|つち|흙|はなの たねを 土に うえました。|꽃씨를 흙에 심었어요.
+二|ニ|ふた・ふた(つ)|두 이|二つ|ふたつ|두 개|ケーキを 二つに わけました。|케이크를 둘로 나눴어요.
+日|ニチ・ジツ|ひ・か|날 일|日よう日|にちようび|일요일|日よう日は いえで やすみます。|일요일에는 집에서 쉬어요.
+入|ニュウ|い(る)・い(れる)・はい(る)|들 입|入る|はいる|들어가다|へやに 入る まえに ノックします。|방에 들어가기 전에 노크해요.
+年|ネン|とし|해 년|一年生|いちねんせい|1학년|いもうとは 一年生です。|여동생은 1학년이에요.
+白|ハク・ビャク|しろ・しら・しろ(い)|흰 백|白い|しろい|하얗다|白い くもが うかんで います。|하얀 구름이 떠 있어요.
+八|ハチ|や・や(つ)・やっ(つ)・よう|여덟 팔|八つ|やっつ|여덟 개|おにぎりを 八つ つくりました。|주먹밥을 여덟 개 만들었어요.
+百|ヒャク||일백 백|百|ひゃく|백(100)|テストで 百てんを とりました。|시험에서 100점을 받았어요.
+文|ブン・モン|ふみ|글월 문|作文|さくぶん|작문|なつやすみの 作文を かきました。|여름방학 작문을 썼어요.
+木|ボク・モク|き・こ|나무 목|木|き|나무|こうえんに おおきな 木が あります。|공원에 큰 나무가 있어요.
+本|ホン|もと|근본 본|本|ほん|책|としょかんで 本を かりました。|도서관에서 책을 빌렸어요.
+名|メイ・ミョウ|な|이름 명|名まえ|なまえ|이름|ここに 名まえを かいて ください。|여기에 이름을 써 주세요.
+目|モク・ボク|め・ま|눈 목|目|め|눈|ねこの 目は まるいです。|고양이 눈은 동그래요.
+立|リツ・リュウ|た(つ)・た(てる)|설 립|立つ|たつ|서다|みんな 立って ください。|모두 일어서 주세요.
+力|リョク・リキ|ちから|힘 력|力|ちから|힘|おとうさんは 力が つよいです。|아빠는 힘이 세요.
+林|リン|はやし|수풀 림|林|はやし|숲|林の なかを さんぽしました。|숲속을 산책했어요.
+六|ロク|む・む(つ)・むっ(つ)・むい|여섯 륙|六つ|むっつ|여섯 개|たまごが 六つ あります。|달걀이 여섯 개 있어요.
+引|イン|ひ(く)・ひ(ける)|끌 인|引く|ひく|당기다|つなを ちからいっぱい 引きました。|밧줄을 힘껏 당겼어요.
+羽|ウ|は・はね|깃 우|羽|はね|날개, 깃털|とりが 羽を ひろげました。|새가 날개를 펼쳤어요.
+雲|ウン|くも|구름 운|雲|くも|구름|そらに しろい 雲が あります。|하늘에 하얀 구름이 있어요.
+園|エン|その|동산 원|公園|こうえん|공원|ともだちと 公園で あそびました。|친구와 공원에서 놀았어요.
+遠|エン・オン|とお(い)|멀 원|遠い|とおい|멀다|がっこうは いえから 遠いです。|학교는 집에서 멀어요.
+何|カ|なに・なん|어찌 하|何|なに|무엇|きょうは 何を たべますか。|오늘은 무엇을 먹을래요?
+科|カ||과목 과|理科|りか|과학(과목)|理科の じっけんは たのしいです。|과학 실험은 재미있어요.
+夏|カ・ゲ|なつ|여름 하|夏|なつ|여름|夏に うみへ いきたいです。|여름에 바다에 가고 싶어요.
+家|カ・ケ|いえ・や|집 가|家|いえ|집|わたしの 家は えきの ちかくです。|우리 집은 역 근처예요.
+歌|カ|うた・うた(う)|노래 가|歌|うた|노래|みんなで 歌を うたいました。|다 같이 노래를 불렀어요.
+画|ガ・カク||그림 화, 그을 획|画用紙|がようし|도화지|画用紙に えを かきました。|도화지에 그림을 그렸어요.
+回|カイ・エ|まわ(る)・まわ(す)|돌 회|回る|まわる|돌다|こまが くるくる 回って います。|팽이가 빙글빙글 돌고 있어요.
+会|カイ・エ|あ(う)|모일 회|会う|あう|만나다|あした ともだちに 会います。|내일 친구를 만나요.
+海|カイ|うみ|바다 해|海|うみ|바다|夏やすみに 海で およぎました。|여름방학에 바다에서 수영했어요.
+絵|カイ・エ||그림 회|絵|え|그림|ねこの 絵を かきました。|고양이 그림을 그렸어요.
+外|ガイ・ゲ|そと・ほか・はず(す)・はず(れる)|바깥 외|外|そと|밖|外で あそびましょう。|밖에서 놀아요.
+角|カク|かど・つの|뿔 각|角|かど|모퉁이|つぎの 角を みぎに まがります。|다음 모퉁이에서 오른쪽으로 돌아요.
+楽|ガク・ラク|たの(しい)・たの(しむ)|즐길 락, 노래 악|楽しい|たのしい|즐겁다|えんそくは とても 楽しかったです。|소풍은 아주 즐거웠어요.
+活|カツ||살 활|生活|せいかつ|생활|がっこうの 生活に なれました。|학교생활에 익숙해졌어요.
+間|カン・ケン|あいだ・ま|사이 간|間|あいだ|사이|いえと いえの 間に みちが あります。|집과 집 사이에 길이 있어요.
+丸|ガン|まる・まる(い)・まる(める)|둥글 환|丸い|まるい|둥글다|丸い おさらを ならべました。|둥근 접시를 늘어놓았어요.
+岩|ガン|いわ|바위 암|岩|いわ|바위|やまに 大きな 岩が あります。|산에 큰 바위가 있어요.
+顔|ガン|かお|얼굴 안|顔|かお|얼굴|あさ おきて 顔を あらいます。|아침에 일어나서 세수해요.
+汽|キ||물 끓는 김 기|汽車|きしゃ|기차|むかしの 汽車に のりました。|옛날 기차를 탔어요.
+記|キ|しる(す)|기록할 기|日記|にっき|일기|まいばん 日記を かきます。|매일 밤 일기를 써요.
+帰|キ|かえ(る)・かえ(す)|돌아갈 귀|帰る|かえる|돌아가다|五じに いえへ 帰ります。|5시에 집에 돌아가요.
+弓|キュウ|ゆみ|활 궁|弓|ゆみ|활|弓で やを いりました。|활로 화살을 쐈어요.
+牛|ギュウ|うし|소 우|牛|うし|소|まきばに 牛が います。|목장에 소가 있어요.
+魚|ギョ|うお・さかな|물고기 어|魚|さかな|물고기, 생선|ねこは 魚が すきです。|고양이는 생선을 좋아해요.
+京|キョウ・ケイ||서울 경|東京|とうきょう|도쿄|東京へ りょこうに いきました。|도쿄로 여행을 갔어요.
+強|キョウ・ゴウ|つよ(い)・つよ(まる)・つよ(める)・し(いる)|강할 강|強い|つよい|강하다|きょうは かぜが 強いです。|오늘은 바람이 세요.
+教|キョウ|おし(える)・おそ(わる)|가르칠 교|教える|おしえる|가르치다|ははが りょうりを 教えて くれました。|엄마가 요리를 가르쳐 줬어요.
+近|キン|ちか(い)|가까울 근|近い|ちかい|가깝다|えきは ここから 近いです。|역은 여기서 가까워요.
+兄|キョウ・ケイ|あに|형 형|兄|あに|형, 오빠|兄は ちゅうがくせいです。|형은 중학생이에요.
+形|ケイ・ギョウ|かた・かたち|모양 형|形|かたち|모양|ほしの 形の クッキーです。|별 모양 쿠키예요.
+計|ケイ|はか(る)・はか(らう)|셀 계|時計|とけい|시계|へやの 時計が とまりました。|방 시계가 멈췄어요.
+元|ゲン・ガン|もと|으뜸 원|元気|げんき|건강함, 기운참|みんな 元気ですか。|다들 잘 지내요?
+言|ゲン・ゴン|い(う)・こと|말씀 언|言う|いう|말하다|ありがとうと 言いました。|고맙다고 말했어요.
+原|ゲン|はら|언덕 원|原っぱ|はらっぱ|들판|原っぱで たこを あげました。|들판에서 연을 날렸어요.
+戸|コ|と|지게 호|戸|と|문|戸を しめて ください。|문을 닫아 주세요.
+古|コ|ふる(い)・ふる(す)|예 고|古い|ふるい|오래되다|これは 古い おてらです。|이것은 오래된 절이에요.
+午|ゴ||낮 오|午後|ごご|오후|午後から あめが ふります。|오후부터 비가 와요.
+後|ゴ・コウ|うし(ろ)・あと・のち・おく(れる)|뒤 후|後ろ|うしろ|뒤|わたしの 後ろに ならんで ください。|제 뒤에 줄 서 주세요.
+語|ゴ|かた(る)・かた(らう)|말씀 어|国語|こくご|국어|国語の じゅぎょうが すきです。|국어 수업을 좋아해요.
+工|コウ・ク||장인 공|工作|こうさく|공작, 만들기|工作で はこを つくりました。|만들기 시간에 상자를 만들었어요.
+公|コウ|おおやけ|공평할 공|公園|こうえん|공원|公園の ベンチで やすみました。|공원 벤치에서 쉬었어요.
+広|コウ|ひろ(い)・ひろ(まる)・ひろ(める)・ひろ(がる)・ひろ(げる)|넓을 광|広い|ひろい|넓다|この こうえんは 広いです。|이 공원은 넓어요.
+交|コウ|まじ(わる)・ま(ぜる)・ま(じる)・か(う)・か(わす)|사귈 교|交通|こうつう|교통|交通ルールを まもりましょう。|교통 규칙을 지킵시다.
+光|コウ|ひか(る)・ひかり|빛 광|光る|ひかる|빛나다|よぞらに ほしが 光って います。|밤하늘에 별이 빛나고 있어요.
+考|コウ|かんが(える)|생각할 고|考える|かんがえる|생각하다|よく 考えて こたえて ください。|잘 생각해서 대답해 주세요.
+行|コウ・ギョウ・アン|い(く)・ゆ(く)・おこな(う)|다닐 행|行く|いく|가다|あした どうぶつえんに 行きます。|내일 동물원에 가요.
+高|コウ|たか(い)・たか・たか(まる)・たか(める)|높을 고|高い|たかい|높다, 비싸다|あの やまは とても 高いです。|저 산은 아주 높아요.
+黄|コウ・オウ|き・こ|누를 황|黄色|きいろ|노란색|黄色い はなが さいて います。|노란 꽃이 피어 있어요.
+合|ゴウ・ガッ・カッ|あ(う)・あ(わす)・あ(わせる)|합할 합|合う|あう|맞다|こたえが 合って いました。|답이 맞았어요.
+谷|コク|たに|골 곡|谷|たに|골짜기|谷に かわが ながれて います。|골짜기에 강이 흐르고 있어요.
+国|コク|くに|나라 국|国|くに|나라|いろいろな 国の ことばを ならいたいです。|여러 나라의 말을 배우고 싶어요.
+黒|コク|くろ・くろ(い)|검을 흑|黒い|くろい|검다|黒い ねこが ねて います。|검은 고양이가 자고 있어요.
+今|コン・キン|いま|이제 금|今|いま|지금|今 なんじですか。|지금 몇 시예요?
+才|サイ||재주 재|天才|てんさい|천재|かれは サッカーの 天才です。|그는 축구 천재예요.
+細|サイ|ほそ(い)・ほそ(る)・こま(か)・こま(かい)|가늘 세|細い|ほそい|가늘다|細い みちを あるきました。|좁은 길을 걸었어요.
+作|サク・サ|つく(る)|지을 작|作る|つくる|만들다|ははと ケーキを 作りました。|엄마와 케이크를 만들었어요.
+算|サン||셈 산|算数|さんすう|산수|算数の しゅくだいを しました。|산수 숙제를 했어요.
+止|シ|と(まる)・と(める)|그칠 지|止まる|とまる|멈추다|あかしんごうで 止まります。|빨간불에서 멈춰요.
+市|シ|いち|저자 시|市|し|시(도시)|わたしの すんで いる 市は ひろいです。|제가 사는 시는 넓어요.
+矢|シ|や|화살 시|矢|や|화살|矢が まとに あたりました。|화살이 과녁에 맞았어요.
+姉|シ|あね|손윗누이 자|姉|あね|누나, 언니|姉は ピアノが じょうずです。|언니는 피아노를 잘 쳐요.
+思|シ|おも(う)|생각 사|思う|おもう|생각하다|あしたは はれると 思います。|내일은 맑을 것 같아요.
+紙|シ|かみ|종이 지|紙|かみ|종이|紙で ひこうきを おりました。|종이로 비행기를 접었어요.
+寺|ジ|てら|절 사|お寺|おてら|절|きょうとで お寺を 見ました。|교토에서 절을 봤어요.
+自|ジ・シ|みずか(ら)|스스로 자|自分|じぶん|자기, 자신|自分の へやを そうじしました。|제 방을 청소했어요.
+時|ジ|とき|때 시|時間|じかん|시간|もう ねる 時間です。|벌써 잘 시간이에요.
+室|シツ|むろ|집 실|教室|きょうしつ|교실|教室で べんきょうします。|교실에서 공부해요.
+社|シャ|やしろ|모일 사|会社|かいしゃ|회사|ちちは 会社へ いきました。|아버지는 회사에 갔어요.
+弱|ジャク|よわ(い)・よわ(る)・よわ(まる)・よわ(める)|약할 약|弱い|よわい|약하다|わたしは さむさに 弱いです。|저는 추위에 약해요.
+首|シュ|くび|머리 수|首|くび|목|きりんの 首は ながいです。|기린의 목은 길어요.
+秋|シュウ|あき|가을 추|秋|あき|가을|秋は もみじが きれいです。|가을은 단풍이 예뻐요.
+週|シュウ||돌 주|毎週|まいしゅう|매주|毎週 どようびに プールへ いきます。|매주 토요일에 수영장에 가요.
+春|シュン|はる|봄 춘|春|はる|봄|春に さくらが さきます。|봄에 벚꽃이 펴요.
+書|ショ|か(く)|글 서|書く|かく|쓰다|てがみを 書きました。|편지를 썼어요.
+少|ショウ|すく(ない)・すこ(し)|적을 소|少し|すこし|조금|少し まって ください。|잠깐 기다려 주세요.
+場|ジョウ|ば|마당 장|場所|ばしょ|장소|あつまる 場所を きめましょう。|모일 장소를 정해요.
+色|ショク・シキ|いろ|빛 색|色|いろ|색|すきな 色は なんですか。|좋아하는 색은 뭐예요?
+食|ショク・ジキ|た(べる)・く(う)・く(らう)|밥 식|食べる|たべる|먹다|あさごはんを 食べました。|아침밥을 먹었어요.
+心|シン|こころ|마음 심|心|こころ|마음|心を こめて てがみを かきました。|정성을 담아 편지를 썼어요.
+新|シン|あたら(しい)・あら(た)・にい|새 신|新しい|あたらしい|새롭다|新しい くつを かいました。|새 신발을 샀어요.
+親|シン|おや・した(しい)・した(しむ)|친할 친|親|おや|부모|親に てがみを おくりました。|부모님께 편지를 보냈어요.
+図|ズ・ト|はか(る)|그림 도|図書館|としょかん|도서관|図書館で しずかに よみます。|도서관에서 조용히 읽어요.
+数|スウ・ス|かず・かぞ(える)|셈 수|数える|かぞえる|세다|ほしの かずを 数えました。|별의 개수를 셌어요.
+西|セイ・サイ|にし|서녘 서|西|にし|서쪽|たいようは 西に しずみます。|해는 서쪽으로 져요.
+声|セイ・ショウ|こえ・こわ|소리 성|声|こえ|목소리|大きな 声で よんで ください。|큰 소리로 읽어 주세요.
+星|セイ・ショウ|ほし|별 성|星|ほし|별|よぞらに 星が たくさん 見えます。|밤하늘에 별이 많이 보여요.
+晴|セイ|は(れる)・は(らす)|갤 청|晴れ|はれ|맑음|あしたは 晴れるでしょう。|내일은 맑겠어요.
+切|セツ・サイ|き(る)・き(れる)|끊을 절|切る|きる|자르다|はさみで かみを 切ります。|가위로 종이를 잘라요.
+雪|セツ|ゆき|눈 설|雪|ゆき|눈|雪で ゆきだるまを つくりました。|눈으로 눈사람을 만들었어요.
+船|セン|ふね・ふな|배 선|船|ふね|배|大きな 船が みなとに います。|큰 배가 항구에 있어요.
+線|セン||줄 선|線|せん|선|まっすぐな 線を ひきましょう。|곧은 선을 그어요.
+前|ゼン|まえ|앞 전|前|まえ|앞|えきの 前で まって います。|역 앞에서 기다리고 있어요.
+組|ソ|く・く(む)|짤 조|一組|いちくみ|1반|わたしは 一組です。|저는 1반이에요.
+走|ソウ|はし(る)|달릴 주|走る|はしる|달리다|うんどうじょうを 走りました。|운동장을 달렸어요.
+多|タ|おお(い)|많을 다|多い|おおい|많다|この まちは 人が 多いです。|이 동네는 사람이 많아요.
+太|タイ・タ|ふと(い)・ふと(る)|클 태|太い|ふとい|굵다|太い えんぴつで かきます。|굵은 연필로 써요.
+体|タイ・テイ|からだ|몸 체|体|からだ|몸|体を うごかすのが すきです。|몸을 움직이는 것을 좋아해요.
+台|ダイ・タイ||대 대|台所|だいどころ|부엌|ははは 台所に います。|엄마는 부엌에 있어요.
+地|チ・ジ||땅 지|地図|ちず|지도|地図を 見ながら あるきます。|지도를 보면서 걸어요.
+池|チ|いけ|못 지|池|いけ|연못|池に こいが およいで います。|연못에 잉어가 헤엄치고 있어요.
+知|チ|し(る)|알 지|知る|しる|알다|その ことは 知りませんでした。|그 일은 몰랐어요.
+茶|チャ・サ||차 다|お茶|おちゃ|차|あたたかい お茶を のみます。|따뜻한 차를 마셔요.
+昼|チュウ|ひる|낮 주|昼ごはん|ひるごはん|점심밥|昼ごはんに うどんを たべました。|점심으로 우동을 먹었어요.
+長|チョウ|なが(い)|길 장|長い|ながい|길다|かのじょの かみは 長いです。|그녀의 머리는 길어요.
+鳥|チョウ|とり|새 조|鳥|とり|새|木の 上で 鳥が ないて います。|나무 위에서 새가 울고 있어요.
+朝|チョウ|あさ|아침 조|朝|あさ|아침|朝 六じに おきます。|아침 6시에 일어나요.
+直|チョク・ジキ|ただ(ちに)・なお(す)・なお(る)|곧을 직|直す|なおす|고치다|まちがいを 直しました。|틀린 것을 고쳤어요.
+通|ツウ・ツ|とお(る)・とお(す)・かよ(う)|통할 통|通る|とおる|지나가다|この みちを 通って がっこうへ いきます。|이 길을 지나서 학교에 가요.
+弟|テイ・ダイ・デ|おとうと|아우 제|弟|おとうと|남동생|弟と いっしょに あそびました。|남동생과 같이 놀았어요.
+店|テン|みせ|가게 점|店|みせ|가게|この 店の パンは おいしいです。|이 가게의 빵은 맛있어요.
+点|テン||점 점|点|てん|점, 점수|テストで いい 点を とりました。|시험에서 좋은 점수를 받았어요.
+電|デン||번개 전|電車|でんしゃ|전철|電車で がっこうへ いきます。|전철로 학교에 가요.
+刀|トウ|かたな|칼 도|刀|かたな|칼|むかしの さむらいは 刀を もって いました。|옛날 사무라이는 칼을 가지고 있었어요.
+冬|トウ|ふゆ|겨울 동|冬|ふゆ|겨울|冬は ゆきが ふります。|겨울에는 눈이 와요.
+当|トウ|あ(たる)・あ(てる)|마땅 당|本当|ほんとう|정말|それは 本当ですか。|그거 정말이에요?
+東|トウ|ひがし|동녘 동|東|ひがし|동쪽|たいようは 東から のぼります。|해는 동쪽에서 떠요.
+答|トウ|こた(え)・こた(える)|대답 답|答え|こたえ|답|答えを ノートに かきましょう。|답을 공책에 써요.
+頭|トウ・ズ・ト|あたま・かしら|머리 두|頭|あたま|머리|かぜで 頭が いたいです。|감기로 머리가 아파요.
+同|ドウ|おな(じ)|한가지 동|同じ|おなじ|같다|わたしと 同じ くつですね。|저랑 같은 신발이네요.
+道|ドウ・トウ|みち|길 도|道|みち|길|この 道を まっすぐ いって ください。|이 길로 쭉 가 주세요.
+読|ドク・トク・トウ|よ(む)|읽을 독|読む|よむ|읽다|まいばん 本を 読みます。|매일 밤 책을 읽어요.
+内|ナイ・ダイ|うち|안 내|案内|あんない|안내|まちを 案内して もらいました。|동네를 안내받았어요.
+南|ナン・ナ|みなみ|남녘 남|南|みなみ|남쪽|とりが 南へ とんで いきます。|새가 남쪽으로 날아가요.
+肉|ニク||고기 육|肉|にく|고기|きょうの ゆうごはんは 肉です。|오늘 저녁은 고기예요.
+馬|バ|うま・ま|말 마|馬|うま|말|馬に のって みたいです。|말을 타 보고 싶어요.
+売|バイ|う(る)・う(れる)|팔 매|売る|うる|팔다|あの 店では やさいを 売って います。|저 가게에서는 채소를 팔아요.
+買|バイ|か(う)|살 매|買う|かう|사다|あたらしい ノートを 買いました。|새 공책을 샀어요.
+麦|バク|むぎ|보리 맥|麦茶|むぎちゃ|보리차|夏は つめたい 麦茶を のみます。|여름에는 차가운 보리차를 마셔요.
+半|ハン|なか(ば)|반 반|半分|はんぶん|절반|パンを 半分に わけました。|빵을 반으로 나눴어요.
+番|バン||차례 번|番号|ばんごう|번호|でんわ番号を おしえて ください。|전화번호를 알려 주세요.
+父|フ|ちち|아비 부|父|ちち|아버지|父は りょうりが とくいです。|아버지는 요리를 잘해요.
+風|フウ・フ|かぜ・かざ|바람 풍|風|かぜ|바람|つめたい 風が ふいて います。|차가운 바람이 불고 있어요.
+分|ブン・フン・ブ|わ(ける)・わ(かる)・わ(かれる)|나눌 분|分かる|わかる|알다, 이해하다|せつめいが よく 分かりました。|설명을 잘 이해했어요.
+聞|ブン・モン|き(く)・き(こえる)|들을 문|聞く|きく|듣다|おんがくを 聞くのが すきです。|음악 듣는 것을 좋아해요.
+米|ベイ・マイ|こめ|쌀 미|お米|おこめ|쌀|お米を たいて ごはんを つくります。|쌀을 지어서 밥을 만들어요.
+歩|ホ・ブ・フ|ある(く)・あゆ(む)|걸을 보|歩く|あるく|걷다|えきまで 歩いて いきます。|역까지 걸어서 가요.
+母|ボ|はは|어미 모|母|はは|어머니|母に はなを あげました。|어머니께 꽃을 드렸어요.
+方|ホウ|かた|모 방|方|かた|분(사람의 높임)|あの 方は どなたですか。|저분은 누구세요?
+北|ホク|きた|북녘 북|北|きた|북쪽|北の くには さむいです。|북쪽 나라는 추워요.
+毎|マイ||매양 매|毎日|まいにち|매일|毎日 はを みがきます。|매일 이를 닦아요.
+妹|マイ|いもうと|누이 매|妹|いもうと|여동생|妹は 三さいです。|여동생은 세 살이에요.
+万|マン・バン||일만 만|一万円|いちまんえん|만 엔|一万円で くつを かいました。|만 엔으로 신발을 샀어요.
+明|メイ・ミョウ|あ(かり)・あか(るい)・あ(ける)・あ(くる)・あ(かす)|밝을 명|明るい|あかるい|밝다|この へやは 明るいです。|이 방은 밝아요.
+鳴|メイ|な(く)・な(る)・な(らす)|울 명|鳴く|なく|(동물이) 울다|にわとりが 朝 鳴きます。|닭이 아침에 울어요.
+毛|モウ|け|털 모|毛|け|털|この いぬは 毛が ながいです。|이 개는 털이 길어요.
+門|モン|かど|문 문|門|もん|문, 대문|がっこうの 門の 前で あいましょう。|학교 정문 앞에서 만나요.
+夜|ヤ|よ・よる|밤 야|夜|よる|밤|夜は はやく ねます。|밤에는 일찍 자요.
+野|ヤ|の|들 야|野原|のはら|들판|野原で はなを つみました。|들판에서 꽃을 땄어요.
+友|ユウ|とも|벗 우|友だち|ともだち|친구|友だちと えいがを 見ました。|친구와 영화를 봤어요.
+用|ヨウ|もち(いる)|쓸 용|用事|ようじ|볼일|きょうは 用事が あります。|오늘은 볼일이 있어요.
+曜|ヨウ||빛날 요|月曜日|げつようび|월요일|月曜日から がっこうが はじまります。|월요일부터 학교가 시작돼요.
+来|ライ|く(る)・きた(る)・きた(す)|올 래|来る|くる|오다|あした ともだちが 来ます。|내일 친구가 와요.
+里|リ|さと|마을 리|里|さと|시골, 고향|なつやすみに 里へ かえります。|여름방학에 고향에 내려가요.
+理|リ||다스릴 리|料理|りょうり|요리|ちちの 料理は おいしいです。|아버지의 요리는 맛있어요.
+話|ワ|はな(す)・はなし|말씀 화|話す|はなす|이야기하다|せんせいと 話しました。|선생님과 이야기했어요.
+悪|アク・オ|わる(い)|악할 악|悪い|わるい|나쁘다|きょうは 天気が 悪いです。|오늘은 날씨가 나빠요.
+安|アン|やす(い)|편안 안|安い|やすい|싸다|この りんごは 安いです。|이 사과는 싸요.
+暗|アン|くら(い)|어두울 암|暗い|くらい|어둡다|そとは もう 暗いです。|밖은 벌써 어두워요.
+医|イ||의원 의|医者|いしゃ|의사|おじは 医者です。|삼촌은 의사예요.
+委|イ|ゆだ(ねる)|맡길 위|委員|いいん|위원|クラスの 委員に えらばれました。|반 위원으로 뽑혔어요.
+意|イ||뜻 의|意味|いみ|의미, 뜻|この ことばの 意味を しらべます。|이 단어의 뜻을 찾아봐요.
+育|イク|そだ(つ)・そだ(てる)・はぐく(む)|기를 육|育てる|そだてる|기르다|あさがおを 育てて います。|나팔꽃을 기르고 있어요.
+員|イン||인원 원|店員|てんいん|점원|店員さんに みちを ききました。|점원에게 길을 물었어요.
+院|イン||집 원|病院|びょういん|병원|かぜを ひいて 病院へ いきました。|감기에 걸려서 병원에 갔어요.
+飲|イン|の(む)|마실 음|飲む|のむ|마시다|まいあさ ぎゅうにゅうを 飲みます。|매일 아침 우유를 마셔요.
+運|ウン|はこ(ぶ)|옮길 운|運ぶ|はこぶ|나르다|つくえを きょうしつに 運びました。|책상을 교실로 날랐어요.
+泳|エイ|およ(ぐ)|헤엄칠 영|泳ぐ|およぐ|헤엄치다|プールで 泳ぎました。|수영장에서 헤엄쳤어요.
+駅|エキ||역 역|駅|えき|역|駅の まえで まちあわせしましょう。|역 앞에서 만나요.
+央|オウ||가운데 앙|中央|ちゅうおう|중앙|へやの 中央に テーブルが あります。|방 한가운데에 테이블이 있어요.
+横|オウ|よこ|가로 횡|横|よこ|옆, 가로|わたしの 横に すわって ください。|제 옆에 앉아 주세요.
+屋|オク|や|집 옥|屋上|おくじょう|옥상|屋上から まちが 見えます。|옥상에서 동네가 보여요.
+温|オン|あたた(か)・あたた(かい)・あたた(まる)・あたた(める)|따뜻할 온|温かい|あたたかい|따뜻하다|温かい スープを のみました。|따뜻한 수프를 마셨어요.
+化|カ・ケ|ば(ける)・ば(かす)|될 화|化ける|ばける|둔갑하다|きつねが 人に 化けました。|여우가 사람으로 둔갑했어요.
+荷|カ|に|멜 하|荷物|にもつ|짐|荷物が とても おもいです。|짐이 아주 무거워요.
+界|カイ||지경 계|世界|せかい|세계|世界には たくさんの くにが あります。|세계에는 많은 나라가 있어요.
+開|カイ|ひら(く)・ひら(ける)・あ(く)・あ(ける)|열 개|開ける|あける|열다|まどを 開けて ください。|창문을 열어 주세요.
+階|カイ||섬돌 계|二階|にかい|2층|わたしの へやは 二階です。|제 방은 2층이에요.
+寒|カン|さむ(い)|찰 한|寒い|さむい|춥다|けさは とても 寒いです。|오늘 아침은 아주 추워요.
+感|カン||느낄 감|感じる|かんじる|느끼다|はるの かぜを 感じます。|봄바람을 느껴요.
+漢|カン||한수 한|漢字|かんじ|한자|まいにち 漢字を れんしゅうします。|매일 한자를 연습해요.
+館|カン|やかた|객사 관|図書館|としょかん|도서관|図書館で 本を かりました。|도서관에서 책을 빌렸어요.
+岸|ガン|きし|언덕 안|川岸|かわぎし|강가|川岸を さんぽしました。|강가를 산책했어요.
+起|キ|お(きる)・お(こる)・お(こす)|일어날 기|起きる|おきる|일어나다|朝 七じに 起きます。|아침 7시에 일어나요.
+期|キ・ゴ||기약할 기|学期|がっき|학기|あたらしい 学期が はじまりました。|새 학기가 시작됐어요.
+客|キャク・カク||손 객|お客さん|おきゃくさん|손님|お客さんが きました。|손님이 오셨어요.
+究|キュウ|きわ(める)|연구할 구|研究|けんきゅう|연구|むしの 研究を して います。|곤충 연구를 하고 있어요.
+急|キュウ|いそ(ぐ)|급할 급|急ぐ|いそぐ|서두르다|ちこくしそうなので 急ぎます。|지각할 것 같아서 서둘러요.
+級|キュウ||등급 급|同級生|どうきゅうせい|동급생|かれは わたしの 同級生です。|그는 제 동급생이에요.
+宮|キュウ・グウ・ク|みや|집 궁|宮|みや|신사, 궁|ふるい お宮に おまいりしました。|오래된 신사에 참배했어요.
+球|キュウ|たま|공 구|野球|やきゅう|야구|あにと 野球を しました。|형과 야구를 했어요.
+去|キョ・コ|さ(る)|갈 거|去年|きょねん|작년|去年 にほんへ いきました。|작년에 일본에 갔어요.
+橋|キョウ|はし|다리 교|橋|はし|다리|川に ながい 橋が かかって います。|강에 긴 다리가 놓여 있어요.
+業|ギョウ・ゴウ|わざ|업 업|授業|じゅぎょう|수업|一じかんめの 授業は さんすうです。|1교시 수업은 산수예요.
+曲|キョク|ま(がる)・ま(げる)|굽을 곡|曲がる|まがる|돌다, 굽다|かどを みぎに 曲がって ください。|모퉁이에서 오른쪽으로 돌아 주세요.
+局|キョク||판 국|郵便局|ゆうびんきょく|우체국|郵便局で きってを かいました。|우체국에서 우표를 샀어요.
+銀|ギン||은 은|銀行|ぎんこう|은행|ははは 銀行へ いきました。|엄마는 은행에 갔어요.
+区|ク||구분할 구|区役所|くやくしょ|구청|区役所で てつづきを しました。|구청에서 수속을 했어요.
+苦|ク|くる(しい)・くる(しむ)・くる(しめる)・にが(い)・にが(る)|쓸 고|苦い|にがい|쓰다(맛)|この くすりは 苦いです。|이 약은 써요.
+具|グ||갖출 구|道具|どうぐ|도구|えを かく 道具を そろえました。|그림 그릴 도구를 갖췄어요.
+君|クン|きみ|임금 군|君|きみ|너, 자네|君の なまえは なんですか。|너 이름이 뭐야?
+係|ケイ|かか(る)・かかり|맬 계|係|かかり|담당|わたしは きゅうしょくの 係です。|저는 급식 담당이에요.
+軽|ケイ|かる(い)・かろ(やか)|가벼울 경|軽い|かるい|가볍다|この かばんは 軽いです。|이 가방은 가벼워요.
+血|ケツ|ち|피 혈|血|ち|피|ころんで ひざから 血が でました。|넘어져서 무릎에서 피가 났어요.
+決|ケツ|き(める)・き(まる)|결단할 결|決める|きめる|정하다|あそぶ ばしょを 決めましょう。|놀 장소를 정해요.
+研|ケン|と(ぐ)|갈 연|研究|けんきゅう|연구|あには ほしの 研究を して います。|형은 별 연구를 하고 있어요.
+県|ケン||고을 현|県|けん|현(일본의 행정구역)|わたしは 千葉県に すんで います。|저는 지바현에 살아요.
+庫|コ・ク||곳집 고|冷蔵庫|れいぞうこ|냉장고|冷蔵庫に ジュースが あります。|냉장고에 주스가 있어요.
+湖|コ|みずうみ|호수 호|湖|みずうみ|호수|湖で ボートに のりました。|호수에서 보트를 탔어요.
+向|コウ|む(く)・む(ける)・む(かう)・む(こう)|향할 향|向かう|むかう|향하다|みんなで 駅へ 向かいました。|다 같이 역으로 향했어요.
+幸|コウ|さいわ(い)・さち・しあわ(せ)|다행 행|幸せ|しあわせ|행복|かぞくと いると 幸せです。|가족과 있으면 행복해요.
+港|コウ|みなと|항구 항|港|みなと|항구|港に ふねが とまって います。|항구에 배가 정박해 있어요.
+号|ゴウ||이름 호|番号|ばんごう|번호|でんわ番号を かいて ください。|전화번호를 써 주세요.
+根|コン|ね|뿌리 근|根|ね|뿌리|この 木は 根が ふかいです。|이 나무는 뿌리가 깊어요.
+祭|サイ|まつ(る)・まつ(り)|제사 제|お祭り|おまつり|축제|夏の お祭りに いきました。|여름 축제에 갔어요.
+皿||さら|그릇 명|お皿|おさら|접시|お皿を あらって ください。|접시를 씻어 주세요.
+仕|シ・ジ|つか(える)|섬길 사|仕事|しごと|일, 직업|ははの 仕事は かんごしです。|엄마의 직업은 간호사예요.
+死|シ|し(ぬ)|죽을 사|死ぬ|しぬ|죽다|かって いた きんぎょが 死にました。|기르던 금붕어가 죽었어요.
+使|シ|つか(う)|하여금 사|使う|つかう|사용하다|この ペンを 使って ください。|이 펜을 쓰세요.
+始|シ|はじ(める)・はじ(まる)|비로소 시|始まる|はじまる|시작되다|えいがが もうすぐ 始まります。|영화가 곧 시작돼요.
+指|シ|ゆび・さ(す)|가리킬 지|指|ゆび|손가락|指で かずを かぞえました。|손가락으로 숫자를 셌어요.
+歯|シ|は|이 치|歯|は|이, 치아|ねる まえに 歯を みがきます。|자기 전에 이를 닦아요.
+詩|シ||시 시|詩|し|시|すきな 詩を ノートに かきました。|좋아하는 시를 공책에 썼어요.
+次|ジ・シ|つ(ぐ)・つぎ|버금 차|次|つぎ|다음|次の えきで おります。|다음 역에서 내려요.
+事|ジ・ズ|こと|일 사|事|こと|일, 것|たいせつな 事を わすれました。|중요한 일을 잊어버렸어요.
+持|ジ|も(つ)|가질 지|持つ|もつ|들다, 가지다|かさを 持って いきましょう。|우산을 가지고 가요.
+式|シキ||법 식|入学式|にゅうがくしき|입학식|あした 入学式が あります。|내일 입학식이 있어요.
+実|ジツ|み・みの(る)|열매 실|実|み|열매|木に あかい 実が なりました。|나무에 빨간 열매가 열렸어요.
+写|シャ|うつ(す)・うつ(る)|베낄 사|写真|しゃしん|사진|みんなで 写真を とりました。|다 같이 사진을 찍었어요.
+者|シャ|もの|놈 자|若者|わかもの|젊은이|この まちには 若者が おおいです。|이 동네에는 젊은이가 많아요.
+主|シュ・ス|ぬし・おも|임금 주|主人公|しゅじんこう|주인공|この はなしの 主人公は ねこです。|이 이야기의 주인공은 고양이예요.
+守|シュ・ス|まも(る)・もり|지킬 수|守る|まもる|지키다|やくそくを 守りましょう。|약속을 지킵시다.
+取|シュ|と(る)|가질 취|取る|とる|잡다, 집다|しおを 取って ください。|소금 좀 집어 주세요.
+酒|シュ|さけ・さか|술 주|お酒|おさけ|술|ちちは お酒を のみません。|아버지는 술을 안 마셔요.
+受|ジュ|う(ける)・う(かる)|받을 수|受ける|うける|받다, 치르다|あした テストを 受けます。|내일 시험을 봐요.
+州|シュウ|す|고을 주|九州|きゅうしゅう|규슈|九州へ りょこうに いきました。|규슈로 여행을 갔어요.
+拾|シュウ・ジュウ|ひろ(う)|주울 습|拾う|ひろう|줍다|こうえんで ごみを 拾いました。|공원에서 쓰레기를 주웠어요.
+終|シュウ|お(わる)・お(える)|마칠 종|終わる|おわる|끝나다|じゅぎょうが 終わりました。|수업이 끝났어요.
+習|シュウ|なら(う)|익힐 습|習う|ならう|배우다|ピアノを 習って います。|피아노를 배우고 있어요.
+集|シュウ|あつ(まる)・あつ(める)・つど(う)|모을 집|集める|あつめる|모으다|きってを 集めて います。|우표를 모으고 있어요.
+住|ジュウ|す(む)・す(まう)|살 주|住む|すむ|살다|おおさかに 住んで います。|오사카에 살고 있어요.
+重|ジュウ・チョウ|え・おも(い)・かさ(ねる)・かさ(なる)|무거울 중|重い|おもい|무겁다|この はこは 重いです。|이 상자는 무거워요.
+宿|シュク|やど・やど(る)・やど(す)|잘 숙|宿題|しゅくだい|숙제|宿題を わすれました。|숙제를 잊어버렸어요.
+所|ショ|ところ|바 소|所|ところ|곳, 장소|しずかな 所で べんきょうします。|조용한 곳에서 공부해요.
+暑|ショ|あつ(い)|더울 서|暑い|あつい|덥다|ことしの なつは 暑いです。|올여름은 더워요.
+助|ジョ|たす(ける)・たす(かる)・すけ|도울 조|助ける|たすける|돕다|こまって いる 人を 助けました。|곤란한 사람을 도왔어요.
+昭|ショウ||밝을 소|昭和|しょうわ|쇼와(연호)|そふは 昭和に うまれました。|할아버지는 쇼와 시대에 태어났어요.
+消|ショウ|き(える)・け(す)|사라질 소|消す|けす|끄다, 지우다|へやの でんきを 消して ください。|방 불을 꺼 주세요.
+商|ショウ|あきな(う)|장사 상|商店|しょうてん|상점|えきまえに 商店が ならんで います。|역 앞에 상점이 늘어서 있어요.
+章|ショウ||글 장|文章|ぶんしょう|문장, 글|文章を 書くのが すきです。|글 쓰는 것을 좋아해요.
+勝|ショウ|か(つ)・まさ(る)|이길 승|勝つ|かつ|이기다|しあいに 勝ちました。|시합에서 이겼어요.
+乗|ジョウ|の(る)・の(せる)|탈 승|乗る|のる|타다|バスに 乗って いきます。|버스를 타고 가요.
+植|ショク|う(える)・う(わる)|심을 식|植える|うえる|심다|にわに チューリップを 植えました。|정원에 튤립을 심었어요.
+申|シン|もう(す)|납 신|申す|もうす|말씀드리다|わたしは たなかと 申します。|저는 다나카라고 합니다.
+身|シン|み|몸 신|身長|しんちょう|키|身長が 五センチ のびました。|키가 5센티 자랐어요.
+神|シン・ジン|かみ・かん・こう|귀신 신|神社|じんじゃ|신사|おしょうがつに 神社へ いきました。|설날에 신사에 갔어요.
+真|シン|ま|참 진|真ん中|まんなか|한가운데|へやの 真ん中に すわりました。|방 한가운데에 앉았어요.
+深|シン|ふか(い)・ふか(まる)・ふか(める)|깊을 심|深い|ふかい|깊다|この うみは とても 深いです。|이 바다는 아주 깊어요.
+進|シン|すす(む)・すす(める)|나아갈 진|進む|すすむ|나아가다|まえに 進んで ください。|앞으로 나아가 주세요.
+世|セイ・セ|よ|인간 세|世界|せかい|세계|世界の ちずを 見ました。|세계 지도를 봤어요.
+整|セイ|ととの(える)・ととの(う)|가지런할 정|整える|ととのえる|가지런히 하다|つくえの 上を 整えました。|책상 위를 정리했어요.
+昔|セキ・シャク|むかし|예 석|昔|むかし|옛날|昔 むかし、ある ところに…|옛날 옛적 어느 곳에…
+全|ゼン|まった(く)・すべ(て)|온전 전|全部|ぜんぶ|전부|ごはんを 全部 たべました。|밥을 전부 먹었어요.
+相|ソウ・ショウ|あい|서로 상|相手|あいて|상대|しあいの 相手は つよいです。|시합 상대는 강해요.
+送|ソウ|おく(る)|보낼 송|送る|おくる|보내다|ともだちに てがみを 送りました。|친구에게 편지를 보냈어요.
+想|ソウ・ソ||생각 상|想像|そうぞう|상상|みらいの まちを 想像しました。|미래의 도시를 상상했어요.
+息|ソク|いき|쉴 식|息|いき|숨|はしって 息が くるしいです。|달려서 숨이 차요.
+速|ソク|はや(い)・はや(める)・すみ(やか)|빠를 속|速い|はやい|빠르다|しんかんせんは とても 速いです。|신칸센은 아주 빨라요.
+族|ゾク||겨레 족|家族|かぞく|가족|家族で りょこうに いきました。|가족끼리 여행을 갔어요.
+他|タ|ほか|다를 타|他|ほか|다른 것|他の いろも ありますか。|다른 색도 있어요?
+打|ダ|う(つ)|칠 타|打つ|うつ|치다|ボールを バットで 打ちました。|공을 방망이로 쳤어요.
+対|タイ・ツイ||대할 대|反対|はんたい|반대|その いけんに 反対です。|그 의견에 반대예요.
+待|タイ|ま(つ)|기다릴 대|待つ|まつ|기다리다|えきで ともだちを 待ちます。|역에서 친구를 기다려요.
+代|ダイ・タイ|か(わる)・か(える)・よ・しろ|대신할 대|代わる|かわる|대신하다|せんせいに 代わって わたしが よみます。|선생님 대신 제가 읽을게요.
+第|ダイ||차례 제|第一|だいいち|첫째|第一に けがを しない ことが たいせつです。|첫째로 다치지 않는 것이 중요해요.
+題|ダイ||제목 제|問題|もんだい|문제|この 問題は むずかしいです。|이 문제는 어려워요.
+炭|タン|すみ|숯 탄|炭|すみ|숯|炭で にくを やきました。|숯으로 고기를 구웠어요.
+短|タン|みじか(い)|짧을 단|短い|みじかい|짧다|かみを 短く きりました。|머리를 짧게 잘랐어요.
+談|ダン||말씀 담|相談|そうだん|상담, 의논|せんせいに 相談しました。|선생님과 의논했어요.
+着|チャク・ジャク|き(る)・き(せる)・つ(く)・つ(ける)|붙을 착|着る|きる|입다|あたらしい ふくを 着ました。|새 옷을 입었어요.
+注|チュウ|そそ(ぐ)|부을 주|注意|ちゅうい|주의|くるまに 注意して ください。|차를 조심하세요.
+柱|チュウ|はしら|기둥 주|柱|はしら|기둥|いえの 柱に せの たかさを しるしました。|집 기둥에 키를 표시했어요.
+丁|チョウ・テイ||고무래 정|丁寧|ていねい|정중함, 꼼꼼함|字を 丁寧に かきましょう。|글씨를 정성껏 써요.
+帳|チョウ||장막 장|手帳|てちょう|수첩|手帳に よていを かきます。|수첩에 일정을 적어요.
+調|チョウ|しら(べる)・ととの(う)・ととの(える)|고를 조|調べる|しらべる|조사하다|じしょで ことばを 調べました。|사전에서 단어를 찾아봤어요.
+追|ツイ|お(う)|쫓을 추|追う|おう|쫓다|いぬが ねこを 追いかけました。|개가 고양이를 쫓아갔어요.
+定|テイ・ジョウ|さだ(める)・さだ(まる)・さだ(か)|정할 정|予定|よてい|예정|あしたの 予定は ありますか。|내일 예정 있어요?
+庭|テイ|にわ|뜰 정|庭|にわ|정원, 마당|庭で いぬと あそびました。|마당에서 개와 놀았어요.
+笛|テキ|ふえ|피리 적|笛|ふえ|피리|音楽の じかんに 笛を ふきました。|음악 시간에 피리를 불었어요.
+鉄|テツ||쇠 철|地下鉄|ちかてつ|지하철|地下鉄で かいしゃへ いきます。|지하철로 회사에 가요.
+転|テン|ころ(がる)・ころ(げる)・ころ(がす)・ころ(ぶ)|구를 전|転ぶ|ころぶ|넘어지다|はしって いて 転びました。|달리다가 넘어졌어요.
+都|ト・ツ|みやこ|도읍 도|都合|つごう|형편, 사정|あしたの 都合は どうですか。|내일 시간 괜찮아요?
+度|ド・ト・タク|たび|법도 도|今度|こんど|이번, 다음번|今度 いっしょに あそびましょう。|다음에 같이 놀아요.
+投|トウ|な(げる)|던질 투|投げる|なげる|던지다|ボールを 投げて ください。|공을 던져 주세요.
+豆|トウ・ズ|まめ|콩 두|豆|まめ|콩|せつぶんに 豆を まきました。|세쓰분에 콩을 뿌렸어요.
+島|トウ|しま|섬 도|島|しま|섬|ふねで 島へ わたりました。|배로 섬에 건너갔어요.
+湯|トウ|ゆ|끓을 탕|お湯|おゆ|뜨거운 물|お湯を わかして おちゃを いれます。|물을 끓여서 차를 타요.
+登|トウ・ト|のぼ(る)|오를 등|登る|のぼる|오르다|ふじさんに 登りたいです。|후지산에 오르고 싶어요.
+等|トウ|ひと(しい)|무리 등|平等|びょうどう|평등|みんなに 平等に わけましょう。|모두에게 공평하게 나눠요.
+動|ドウ|うご(く)・うご(かす)|움직일 동|動く|うごく|움직이다|この おもちゃは でんちで 動きます。|이 장난감은 건전지로 움직여요.
+童|ドウ|わらべ|아이 동|童話|どうわ|동화|ねる まえに 童話を よみました。|자기 전에 동화를 읽었어요.
+農|ノウ||농사 농|農家|のうか|농가|おじは 農家です。|삼촌은 농사를 지어요.
+波|ハ|なみ|물결 파|波|なみ|파도|きょうは 波が たかいです。|오늘은 파도가 높아요.
+配|ハイ|くば(る)|나눌 배|配る|くばる|나눠 주다|プリントを みんなに 配りました。|프린트를 모두에게 나눠 줬어요.
+倍|バイ||곱 배|二倍|にばい|두 배|ねだんが 二倍に なりました。|가격이 두 배가 됐어요.
+箱||はこ|상자 상|箱|はこ|상자|おもちゃを 箱に しまいました。|장난감을 상자에 넣었어요.
+畑||はた・はたけ|화전 전|畑|はたけ|밭|畑で だいこんを そだてて います。|밭에서 무를 기르고 있어요.
+発|ハツ・ホツ||필 발|出発|しゅっぱつ|출발|あさ 八じに 出発します。|아침 8시에 출발해요.
+反|ハン・ホン・タン|そ(る)・そ(らす)|돌이킬 반|反対|はんたい|반대|反対の いけんも ききましょう。|반대 의견도 들어 봐요.
+坂|ハン|さか|언덕 판|坂|さか|비탈길|この 坂は とても きゅうです。|이 비탈길은 아주 가팔라요.
+板|ハン・バン|いた|널 판|黒板|こくばん|칠판|せんせいが 黒板に 字を かきました。|선생님이 칠판에 글씨를 썼어요.
+皮|ヒ|かわ|가죽 피|皮|かわ|껍질|バナナの 皮を むきました。|바나나 껍질을 벗겼어요.
+悲|ヒ|かな(しい)・かな(しむ)|슬플 비|悲しい|かなしい|슬프다|ともだちが ひっこして 悲しいです。|친구가 이사 가서 슬퍼요.
+美|ビ|うつく(しい)|아름다울 미|美しい|うつくしい|아름답다|ゆうやけが 美しいです。|저녁노을이 아름다워요.
+鼻|ビ|はな|코 비|鼻|はな|코|ぞうの 鼻は ながいです。|코끼리 코는 길어요.
+筆|ヒツ|ふで|붓 필|筆|ふで|붓|筆で 字を かきました。|붓으로 글씨를 썼어요.
+氷|ヒョウ|こおり・ひ|얼음 빙|氷|こおり|얼음|ジュースに 氷を いれました。|주스에 얼음을 넣었어요.
+表|ヒョウ|おもて・あらわ(す)・あらわ(れる)|겉 표|表す|あらわす|나타내다|きもちを ことばで 表します。|마음을 말로 표현해요.
+秒|ビョウ||분초 초|秒|びょう|초|百メートルを 十五秒で はしりました。|100미터를 15초에 달렸어요.
+病|ビョウ・ヘイ|や(む)・やまい|병 병|病気|びょうき|병|病気で がっこうを やすみました。|병으로 학교를 쉬었어요.
+品|ヒン|しな|물건 품|品物|しなもの|물건|この 店は 品物が おおいです。|이 가게는 물건이 많아요.
+負|フ|ま(ける)・ま(かす)・お(う)|질 부|負ける|まける|지다|しあいに 負けて くやしいです。|시합에 져서 분해요.
+部|ブ||떼 부|部屋|へや|방|部屋を きれいに しました。|방을 깨끗하게 했어요.
+服|フク||옷 복|服|ふく|옷|あたらしい 服を かいました。|새 옷을 샀어요.
+福|フク||복 복|幸福|こうふく|행복|みんなの 幸福を ねがいます。|모두의 행복을 빌어요.
+物|ブツ・モツ|もの|물건 물|物|もの|물건|わすれ物を しないように しましょう。|물건을 두고 오지 않도록 해요.
+平|ヘイ・ビョウ|たい(ら)・ひら|평평할 평|平ら|たいら|평평함|平らな みちを あるきます。|평평한 길을 걸어요.
+返|ヘン|かえ(す)・かえ(る)|돌이킬 반|返す|かえす|돌려주다|かりた 本を 返しました。|빌린 책을 돌려줬어요.
+勉|ベン||힘쓸 면|勉強|べんきょう|공부|まいにち 勉強します。|매일 공부해요.
+放|ホウ|はな(す)・はな(つ)・はな(れる)|놓을 방|放す|はなす|놓아주다|つった さかなを 川に 放しました。|낚은 물고기를 강에 놓아줬어요.
+味|ミ|あじ・あじ(わう)|맛 미|味|あじ|맛|この スープは いい 味です。|이 수프는 맛이 좋아요.
+命|メイ・ミョウ|いのち|목숨 명|命|いのち|생명|命を たいせつに しましょう。|생명을 소중히 해요.
+面|メン|おも・おもて・つら|낯 면|面白い|おもしろい|재미있다|この まんがは 面白いです。|이 만화는 재미있어요.
+問|モン|と(う)・と(い)・とん|물을 문|問題|もんだい|문제|算数の 問題を ときました。|산수 문제를 풀었어요.
+役|ヤク・エキ||부릴 역|役に立つ|やくにたつ|도움이 되다|この じしょは とても 役に立ちます。|이 사전은 아주 도움이 돼요.
+薬|ヤク|くすり|약 약|薬|くすり|약|ごはんの あとで 薬を のみます。|밥 먹은 후에 약을 먹어요.
+由|ユ・ユウ・ユイ|よし|말미암을 유|自由|じゆう|자유|やすみじかんは 自由に あそべます。|쉬는 시간에는 자유롭게 놀 수 있어요.
+油|ユ|あぶら|기름 유|油|あぶら|기름|フライパンに 油を ひきます。|프라이팬에 기름을 둘러요.
+有|ユウ・ウ|あ(る)|있을 유|有名|ゆうめい|유명함|この おてらは 有名です。|이 절은 유명해요.
+遊|ユウ・ユ|あそ(ぶ)|놀 유|遊ぶ|あそぶ|놀다|こうえんで 遊びましょう。|공원에서 놀아요.
+予|ヨ||미리 예|予定|よてい|예정|夏休みの 予定を たてました。|여름방학 계획을 세웠어요.
+羊|ヨウ|ひつじ|양 양|羊|ひつじ|양|まきばに 羊が たくさん います。|목장에 양이 많이 있어요.
+洋|ヨウ||큰 바다 양|洋服|ようふく|양복, 옷|洋服を たたみました。|옷을 갰어요.
+葉|ヨウ|は|잎 엽|葉っぱ|はっぱ|잎사귀|あかい 葉っぱを ひろいました。|빨간 잎사귀를 주웠어요.
+陽|ヨウ||볕 양|太陽|たいよう|태양|太陽が まぶしいです。|태양이 눈부셔요.
+様|ヨウ|さま|모양 양|様子|ようす|모습, 상태|ねこの 様子が へんです。|고양이 상태가 이상해요.
+落|ラク|お(ちる)・お(とす)|떨어질 락|落ちる|おちる|떨어지다|木から りんごが 落ちました。|나무에서 사과가 떨어졌어요.
+流|リュウ・ル|なが(れる)・なが(す)|흐를 류|流れる|ながれる|흐르다|川が ゆっくり 流れて います。|강이 천천히 흐르고 있어요.
+旅|リョ|たび|나그네 려|旅行|りょこう|여행|家族で 旅行に いきます。|가족끼리 여행 가요.
+両|リョウ||두 량|両手|りょうて|양손|両手で ボールを うけました。|양손으로 공을 받았어요.
+緑|リョク・ロク|みどり|푸를 록|緑|みどり|초록|はるの やまは 緑が きれいです。|봄 산은 초록이 예뻐요.
+礼|レイ・ライ||예도 례|お礼|おれい|감사 인사|てつだって くれた 人に お礼を いいました。|도와준 사람에게 감사 인사를 했어요.
+列|レツ||벌일 렬|列|れつ|줄|一列に ならんで ください。|한 줄로 서 주세요.
+練|レン|ね(る)|익힐 련|練習|れんしゅう|연습|まいにち ピアノを 練習します。|매일 피아노를 연습해요.
+路|ロ|じ|길 로|道路|どうろ|도로|道路を わたる ときは 気を つけて。|도로를 건널 때는 조심해요.
+和|ワ・オ|やわ(らぐ)・やわ(らげる)・なご(む)・なご(やか)|화할 화|和食|わしょく|일본 음식|わたしは 和食が すきです。|저는 일본 음식을 좋아해요.
+愛|アイ||사랑 애|愛|あい|사랑|ははの 愛を かんじます。|엄마의 사랑을 느껴요.
+案|アン||책상 안|案内|あんない|안내|えきまで 案内します。|역까지 안내할게요.
+以|イ||써 이|以上|いじょう|이상|三人以上で あそびましょう。|세 명 이상이서 놀아요.
+衣|イ|ころも|옷 의|衣服|いふく|의복|あたたかい 衣服を よういしました。|따뜻한 옷을 준비했어요.
+位|イ|くらい|자리 위|一位|いちい|1위|マラソンで 一位に なりました。|마라톤에서 1위를 했어요.
+茨||いばら|가시나무 자|茨城県|いばらきけん|이바라키현|茨城県は なっとうが ゆうめいです。|이바라키현은 낫토가 유명해요.
+印|イン|しるし|도장 인|目印|めじるし|표시, 표적|あの 木を 目印に して ください。|저 나무를 표시로 삼으세요.
+英|エイ||꽃부리 영|英語|えいご|영어|英語の うたを うたいました。|영어 노래를 불렀어요.
+栄|エイ|さか(える)・は(え)・は(える)|영화 영|栄える|さかえる|번영하다|この まちは むかし 栄えました。|이 마을은 옛날에 번성했어요.
+媛|エン|ひめ|여자 원|愛媛県|えひめけん|에히메현|愛媛県は みかんが ゆうめいです。|에히메현은 귤이 유명해요.
+塩|エン|しお|소금 염|塩|しお|소금|スープに 塩を すこし いれます。|수프에 소금을 조금 넣어요.
+岡||おか|언덕 강|静岡県|しずおかけん|시즈오카현|静岡県で おちゃを のみました。|시즈오카현에서 차를 마셨어요.
+億|オク||억 억|一億|いちおく|1억|日本の 人口は やく 一億二千万人です。|일본 인구는 약 1억 2천만 명이에요.
+加|カ|くわ(える)・くわ(わる)|더할 가|加える|くわえる|더하다|さとうを 加えて まぜます。|설탕을 넣고 섞어요.
+果|カ|は(たす)・は(てる)・は(て)|실과 과|果物|くだもの|과일|すきな 果物は いちごです。|좋아하는 과일은 딸기예요.
+貨|カ||재물 화|貨物|かもつ|화물|貨物れっしゃが はしって います。|화물 열차가 달리고 있어요.
+課|カ||공부할 과|課題|かだい|과제|夏休みの 課題を おえました。|여름방학 과제를 끝냈어요.
+芽|ガ|め|싹 아|芽|め|싹|たねから 芽が でました。|씨앗에서 싹이 났어요.
+賀|ガ||하례 하|年賀状|ねんがじょう|연하장|ともだちに 年賀状を かきました。|친구에게 연하장을 썼어요.
+改|カイ|あらた(める)・あらた(まる)|고칠 개|改める|あらためる|고치다|まちがいを 改めます。|잘못을 고쳐요.
+械|カイ||기계 계|機械|きかい|기계|この 機械は こわれて います。|이 기계는 고장 났어요.
+害|ガイ||해할 해|害虫|がいちゅう|해충|害虫が やさいを たべました。|해충이 채소를 먹었어요.
+街|ガイ・カイ|まち|거리 가|街|まち|거리, 시가지|夜の 街は にぎやかです。|밤거리는 북적거려요.
+各|カク|おのおの|각각 각|各自|かくじ|각자|べんとうは 各自 もって きて ください。|도시락은 각자 가져오세요.
+覚|カク|おぼ(える)・さ(ます)・さ(める)|깨달을 각|覚える|おぼえる|외우다|漢字を 十こ 覚えました。|한자를 10개 외웠어요.
+潟||かた|개펄 석|新潟県|にいがたけん|니가타현|新潟県は おこめが おいしいです。|니가타현은 쌀이 맛있어요.
+完|カン||완전할 완|完成|かんせい|완성|プラモデルが 完成しました。|프라모델이 완성됐어요.
+官|カン||벼슬 관|警官|けいかん|경찰관|警官に みちを ききました。|경찰관에게 길을 물었어요.
+管|カン|くだ|대롱 관|管理|かんり|관리|へやの かぎを 管理します。|방 열쇠를 관리해요.
+関|カン|せき・かか(わる)|관계할 관|関係|かんけい|관계|ふたりは どんな 関係ですか。|두 사람은 어떤 관계예요?
+観|カン||볼 관|観光|かんこう|관광|きょうとを 観光しました。|교토를 관광했어요.
+願|ガン|ねが(う)|원할 원|願い|ねがい|소원|ほしに 願いを かけました。|별에 소원을 빌었어요.
+岐|キ||갈림길 기|岐阜県|ぎふけん|기후현|岐阜県には たかい やまが あります。|기후현에는 높은 산이 있어요.
+希|キ||바랄 희|希望|きぼう|희망|しょうらいの 希望を はなしました。|장래 희망을 이야기했어요.
+季|キ||계절 계|季節|きせつ|계절|すきな 季節は あきです。|좋아하는 계절은 가을이에요.
+旗|キ|はた|기 기|旗|はた|깃발|うんどうかいで 旗を ふりました。|운동회에서 깃발을 흔들었어요.
+器|キ|うつわ|그릇 기|食器|しょっき|식기|食器を あらいました。|식기를 씻었어요.
+機|キ|はた|틀 기|飛行機|ひこうき|비행기|飛行機で おきなわへ いきました。|비행기로 오키나와에 갔어요.
+議|ギ||의논할 의|会議|かいぎ|회의|ちちは いま 会議中です。|아버지는 지금 회의 중이에요.
+求|キュウ|もと(める)|구할 구|求める|もとめる|구하다, 요구하다|たすけを 求めました。|도움을 청했어요.
+泣|キュウ|な(く)|울 읍|泣く|なく|울다|あかちゃんが 泣いて います。|아기가 울고 있어요.
+給|キュウ||줄 급|給食|きゅうしょく|급식|きょうの 給食は カレーです。|오늘 급식은 카레예요.
+挙|キョ|あ(げる)・あ(がる)|들 거|挙げる|あげる|들다|わかる 人は 手を 挙げて ください。|아는 사람은 손을 들어 주세요.
+漁|ギョ・リョウ||고기 잡을 어|漁師|りょうし|어부|おじいさんは 漁師です。|할아버지는 어부예요.
+共|キョウ|とも|한가지 공|共に|ともに|함께|みんなと 共に がんばります。|모두와 함께 힘낼게요.
+協|キョウ||화할 협|協力|きょうりょく|협력|みんなで 協力して そうじしました。|다 같이 협력해서 청소했어요.
+鏡|キョウ|かがみ|거울 경|鏡|かがみ|거울|鏡で かおを 見ました。|거울로 얼굴을 봤어요.
+競|キョウ・ケイ|きそ(う)・せ(る)|다툴 경|競争|きょうそう|경쟁|かけっこで 競争しました。|달리기로 경쟁했어요.
+極|キョク・ゴク|きわ(める)・きわ(まる)・きわ(み)|극진할 극|北極|ほっきょく|북극|北極には しろくまが います。|북극에는 북극곰이 있어요.
+熊||くま|곰 웅|熊本県|くまもとけん|구마모토현|熊本県には 大きな しろが あります。|구마모토현에는 큰 성이 있어요.
+訓|クン||가르칠 훈|訓練|くんれん|훈련|ひなん訓練を しました。|대피 훈련을 했어요.
+軍|グン||군사 군|軍手|ぐんて|목장갑|軍手を はめて くさを とりました。|목장갑을 끼고 풀을 뽑았어요.
+郡|グン||고을 군|郡|ぐん|군(행정구역)|そふは いなかの 郡に すんで います。|할아버지는 시골 군에 살고 계세요.
+群|グン|む(れる)・む(れ)・むら|무리 군|群れ|むれ|무리, 떼|とりの 群れが とんで いきます。|새 떼가 날아가요.
+径|ケイ||지름길 경|直径|ちょっけい|지름|この えんの 直径は 十センチです。|이 원의 지름은 10센티예요.
+景|ケイ||볕 경|景色|けしき|경치|山の 上からの 景色は きれいです。|산 위에서 본 경치는 예뻐요.
+芸|ゲイ||재주 예|芸術|げいじゅつ|예술|芸術の あきに びじゅつかんへ いきました。|예술의 가을에 미술관에 갔어요.
+欠|ケツ|か(ける)・か(く)|이지러질 결|欠席|けっせき|결석|かぜで 欠席しました。|감기로 결석했어요.
+結|ケツ|むす(ぶ)・ゆ(う)・ゆ(わえる)|맺을 결|結ぶ|むすぶ|묶다, 매다|くつの ひもを 結びました。|신발 끈을 맸어요.
+建|ケン・コン|た(てる)・た(つ)|세울 건|建てる|たてる|(건물을) 짓다|あたらしい いえを 建てました。|새 집을 지었어요.
+健|ケン|すこ(やか)|굳셀 건|健康|けんこう|건강|健康の ために あるきます。|건강을 위해 걸어요.
+験|ケン・ゲン||시험 험|試験|しけん|시험|あした 試験が あります。|내일 시험이 있어요.
+固|コ|かた(める)・かた(まる)・かた(い)|굳을 고|固い|かたい|단단하다|この パンは 固いです。|이 빵은 딱딱해요.
+功|コウ・ク||공 공|成功|せいこう|성공|じっけんは 成功しました。|실험은 성공했어요.
+好|コウ|この(む)・す(く)|좋을 호|好き|すき|좋아함|わたしは ねこが 好きです。|저는 고양이를 좋아해요.
+香|コウ・キョウ|か・かお(り)・かお(る)|향기 향|香り|かおり|향기|はなの いい 香りが します。|꽃 향기가 좋아요.
+候|コウ|そうろう|기후 후|天候|てんこう|날씨, 기후|天候が わるいので 中止です。|날씨가 나빠서 중지예요.
+康|コウ||편안 강|健康|けんこう|건강|毎日 やさいを たべて 健康です。|매일 채소를 먹어서 건강해요.
+佐|サ||도울 좌|佐賀県|さがけん|사가현|佐賀県の やきものは ゆうめいです。|사가현의 도자기는 유명해요.
+差|サ|さ(す)|어긋날 차|差|さ|차이|ふたりの せの 差は 五センチです。|두 사람의 키 차이는 5센티예요.
+菜|サイ|な|나물 채|野菜|やさい|채소|野菜を たくさん たべましょう。|채소를 많이 먹어요.
+最|サイ|もっと(も)|가장 최|最初|さいしょ|처음|最初に 名まえを かいて ください。|처음에 이름을 써 주세요.
+埼||さい|갑 기|埼玉県|さいたまけん|사이타마현|埼玉県は とうきょうの となりです。|사이타마현은 도쿄 옆이에요.
+材|ザイ||재목 재|材料|ざいりょう|재료|カレーの 材料を かいました。|카레 재료를 샀어요.
+崎||さき|험할 기|長崎県|ながさきけん|나가사키현|長崎県で ちゃんぽんを たべました。|나가사키현에서 짬뽕을 먹었어요.
+昨|サク||어제 작|昨日|きのう|어제|昨日は あめでした。|어제는 비가 왔어요.
+札|サツ|ふだ|패 찰|名札|なふだ|이름표|むねに 名札を つけます。|가슴에 이름표를 달아요.
+刷|サツ|す(る)|인쇄할 쇄|印刷|いんさつ|인쇄|プリントを 印刷しました。|프린트를 인쇄했어요.
+察|サツ||살필 찰|観察|かんさつ|관찰|あさがおを 観察しました。|나팔꽃을 관찰했어요.
+参|サン|まい(る)|참여할 참|参加|さんか|참가|マラソン大会に 参加しました。|마라톤 대회에 참가했어요.
+産|サン|う(む)・う(まれる)・うぶ|낳을 산|お土産|おみやげ|기념품, 선물|りょこうの お土産を かいました。|여행 기념품을 샀어요.
+散|サン|ち(る)・ち(らす)・ち(らかす)・ち(らかる)|흩을 산|散歩|さんぽ|산책|いぬと 散歩に いきます。|개와 산책하러 가요.
+残|ザン|のこ(る)・のこ(す)|남을 잔|残る|のこる|남다|ケーキが 一つ 残って います。|케이크가 하나 남아 있어요.
+氏|シ|うじ|성씨 씨|氏名|しめい|성명|ここに 氏名を かいて ください。|여기에 성명을 써 주세요.
+司|シ||맡을 사|司会|しかい|사회(진행)|はっぴょう会の 司会を しました。|발표회 사회를 봤어요.
+試|シ|こころ(みる)・ため(す)|시험 시|試合|しあい|시합|サッカーの 試合に でました。|축구 시합에 나갔어요.
+児|ジ・ニ||아이 아|児童|じどう|아동|児童が こうていで あそんで います。|아이들이 교정에서 놀고 있어요.
+治|ジ・チ|おさ(める)・おさ(まる)・なお(る)・なお(す)|다스릴 치|治る|なおる|낫다|かぜが 治りました。|감기가 나았어요.
+滋|ジ||불을 자|滋賀県|しがけん|시가현|滋賀県には 大きな みずうみが あります。|시가현에는 큰 호수가 있어요.
+辞|ジ|や(める)|말씀 사|辞書|じしょ|사전|わからない ことばを 辞書で しらべます。|모르는 단어를 사전에서 찾아요.
+鹿||しか・か|사슴 록|鹿|しか|사슴|なら公園には 鹿が たくさん います。|나라 공원에는 사슴이 많이 있어요.
+失|シツ|うしな(う)|잃을 실|失う|うしなう|잃다|じしんを 失わないで。|자신감을 잃지 마.
+借|シャク|か(りる)|빌릴 차|借りる|かりる|빌리다|ともだちに かさを 借りました。|친구에게 우산을 빌렸어요.
+種|シュ|たね|씨 종|種|たね|씨앗|ひまわりの 種を まきました。|해바라기 씨를 뿌렸어요.
+周|シュウ|まわ(り)|두루 주|周り|まわり|주위|いけの 周りを はしりました。|연못 주위를 달렸어요.
+祝|シュク・シュウ|いわ(う)|빌 축|祝う|いわう|축하하다|みんなで たんじょうびを 祝いました。|다 같이 생일을 축하했어요.
+順|ジュン||순할 순|順番|じゅんばん|순서|順番に ならんで ください。|순서대로 줄 서 주세요.
+初|ショ|はじ(め)・はじ(めて)・はつ・うい・そ(める)|처음 초|初めて|はじめて|처음으로|初めて うみを 見ました。|처음으로 바다를 봤어요.
+松|ショウ|まつ|소나무 송|松|まつ|소나무|にわに 大きな 松の 木が あります。|정원에 큰 소나무가 있어요.
+笑|ショウ|わら(う)・え(む)|웃음 소|笑う|わらう|웃다|あかちゃんが 笑いました。|아기가 웃었어요.
+唱|ショウ|とな(える)|부를 창|合唱|がっしょう|합창|クラスで 合唱しました。|반에서 합창했어요.
+焼|ショウ|や(く)・や(ける)|불사를 소|焼く|やく|굽다|パンを 焼きました。|빵을 구웠어요.
+照|ショウ|て(る)・て(らす)・て(れる)|비칠 조|照らす|てらす|비추다|月が みちを 照らして います。|달이 길을 비추고 있어요.
+城|ジョウ|しろ|재 성|お城|おしろ|성|ひめじの お城を 見ました。|히메지성을 봤어요.
+縄|ジョウ|なわ|노끈 승|縄とび|なわとび|줄넘기|昼休みに 縄とびを しました。|점심시간에 줄넘기를 했어요.
+臣|シン・ジン||신하 신|大臣|だいじん|장관|大臣が テレビで はなして います。|장관이 텔레비전에서 이야기하고 있어요.
+信|シン||믿을 신|信じる|しんじる|믿다|きみの ことばを 信じます。|네 말을 믿을게.
+井|セイ・ショウ|い|우물 정|井戸|いど|우물|むかしは 井戸の みずを つかいました。|옛날에는 우물물을 썼어요.
+成|セイ・ジョウ|な(る)・な(す)|이룰 성|成長|せいちょう|성장|子どもの 成長は はやいです。|아이의 성장은 빨라요.
+省|セイ・ショウ|かえり(みる)・はぶ(く)|살필 성, 덜 생|反省|はんせい|반성|わるい ことを して 反省しました。|나쁜 짓을 해서 반성했어요.
+清|セイ・ショウ|きよ(い)・きよ(まる)・きよ(める)|맑을 청|清い|きよい|맑다|山の 清い 水を のみました。|산의 맑은 물을 마셨어요.
+静|セイ・ジョウ|しず・しず(か)・しず(まる)・しず(める)|고요할 정|静か|しずか|조용함|図書館では 静かに しましょう。|도서관에서는 조용히 해요.
+席|セキ||자리 석|席|せき|자리|この 席は あいて いますか。|이 자리 비어 있어요?
+積|セキ|つ(む)・つ(もる)|쌓을 적|積もる|つもる|쌓이다|雪が たくさん 積もりました。|눈이 많이 쌓였어요.
+折|セツ|お(る)・おり・お(れる)|꺾을 절|折る|おる|접다, 꺾다|かみで つるを 折りました。|종이로 학을 접었어요.
+節|セツ・セチ|ふし|마디 절|季節|きせつ|계절|はるは いい 季節です。|봄은 좋은 계절이에요.
+説|セツ・ゼイ|と(く)|말씀 설|説明|せつめい|설명|せんせいの 説明を よく ききます。|선생님의 설명을 잘 들어요.
+浅|セン|あさ(い)|얕을 천|浅い|あさい|얕다|この プールは 浅いです。|이 수영장은 얕아요.
+戦|セン|いくさ・たたか(う)|싸움 전|戦う|たたかう|싸우다|ヒーローが わるものと 戦います。|히어로가 악당과 싸워요.
+選|セン|えら(ぶ)|가릴 선|選ぶ|えらぶ|고르다|すきな いろを 選んで ください。|좋아하는 색을 골라 주세요.
+然|ゼン・ネン||그럴 연|自然|しぜん|자연|この まちは 自然が ゆたかです。|이 마을은 자연이 풍부해요.
+争|ソウ|あらそ(う)|다툴 쟁|争う|あらそう|다투다|おもちゃを 争って けんかしました。|장난감을 두고 다퉜어요.
+倉|ソウ|くら|곳집 창|倉庫|そうこ|창고|ふるい どうぐを 倉庫に しまいました。|오래된 도구를 창고에 넣었어요.
+巣|ソウ|す|새집 소|巣|す|둥지|木の 上に とりの 巣が あります。|나무 위에 새 둥지가 있어요.
+束|ソク|たば|묶을 속|花束|はなたば|꽃다발|せんせいに 花束を わたしました。|선생님께 꽃다발을 드렸어요.
+側|ソク|がわ|곁 측|右側|みぎがわ|오른쪽|みちの 右側を あるきましょう。|길 오른쪽으로 걸어요.
+続|ゾク|つづ(く)・つづ(ける)|이을 속|続く|つづく|계속되다|あめが 三日も 続いて います。|비가 사흘이나 계속되고 있어요.
+卒|ソツ||마칠 졸|卒業|そつぎょう|졸업|あにが 小学校を 卒業しました。|형이 초등학교를 졸업했어요.
+孫|ソン|まご|손자 손|孫|まご|손주|おばあちゃんは 孫が 五人 います。|할머니는 손주가 다섯 명 있어요.
+帯|タイ|お(びる)・おび|띠 대|帯|おび|(기모노의) 띠|ゆかたの 帯を むすびました。|유카타 띠를 맸어요.
+隊|タイ||무리 대|隊長|たいちょう|대장|たんけん隊の 隊長に なりました。|탐험대 대장이 됐어요.
+達|タツ||통달할 달|友達|ともだち|친구|友達と こうえんへ いきました。|친구와 공원에 갔어요.
+単|タン||홑 단|単語|たんご|단어|英語の 単語を おぼえます。|영어 단어를 외워요.
+置|チ|お(く)|둘 치|置く|おく|두다, 놓다|かばんを つくえの 上に 置きました。|가방을 책상 위에 두었어요.
+仲|チュウ|なか|버금 중|仲よし|なかよし|사이좋음|わたしたちは 仲よしです。|우리는 사이가 좋아요.
+沖|チュウ|おき|화할 충|沖縄|おきなわ|오키나와|沖縄の うみは きれいです。|오키나와의 바다는 예뻐요.
+兆|チョウ|きざ(す)・きざ(し)|조 조|一兆|いっちょう|1조|一兆は とても 大きな かずです。|1조는 아주 큰 숫자예요.
+低|テイ|ひく(い)・ひく(める)・ひく(まる)|낮을 저|低い|ひくい|낮다|この いすは 低いです。|이 의자는 낮아요.
+底|テイ|そこ|밑 저|底|そこ|바닥|うみの 底に さかなが います。|바다 밑바닥에 물고기가 있어요.
+的|テキ|まと|과녁 적|目的|もくてき|목적|りょこうの 目的は なんですか。|여행 목적이 뭐예요?
+典|テン||법 전|辞典|じてん|사전|国語辞典を つかいます。|국어사전을 써요.
+伝|デン|つた(わる)・つた(える)・つた(う)|전할 전|伝える|つたえる|전하다|ははに でんごんを 伝えました。|엄마에게 전갈을 전했어요.
+徒|ト||무리 도|生徒|せいと|학생(중고생)|この がっこうには 生徒が 五百人 います。|이 학교에는 학생이 500명 있어요.
+努|ド|つと(める)|힘쓸 노|努力|どりょく|노력|努力して テストで 百てんを とりました。|노력해서 시험에서 100점을 받았어요.
+灯|トウ|ひ|등 등|電灯|でんとう|전등|へやの 電灯を つけました。|방 전등을 켰어요.
+働|ドウ|はたら(く)|일할 동|働く|はたらく|일하다|ちちは びょういんで 働いて います。|아버지는 병원에서 일해요.
+特|トク||특별할 특|特に|とくに|특히|くだものの 中で 特に いちごが すきです。|과일 중에서 특히 딸기를 좋아해요.
+徳|トク||큰 덕|道徳|どうとく|도덕|道徳の じゅぎょうで はなしあいました。|도덕 수업에서 토론했어요.
+栃||とち|상수리나무 회|栃木県|とちぎけん|도치기현|栃木県で いちごがりを しました。|도치기현에서 딸기 따기를 했어요.
+奈|ナ||어찌 나|奈良|なら|나라(지명)|奈良で 大きな だいぶつを 見ました。|나라에서 큰 불상을 봤어요.
+梨||なし|배나무 리|梨|なし|배(과일)|あきに 梨を たべました。|가을에 배를 먹었어요.
+熱|ネツ|あつ(い)|더울 열|熱|ねつ|열|かぜで 熱が あります。|감기로 열이 있어요.
+念|ネン||생각 념|記念|きねん|기념|記念に しゃしんを とりました。|기념으로 사진을 찍었어요.
+敗|ハイ|やぶ(れる)|패할 패|失敗|しっぱい|실패|りょうりに 失敗しました。|요리에 실패했어요.
+梅|バイ|うめ|매화 매|梅|うめ|매실, 매화|梅の はなが さきました。|매화꽃이 피었어요.
+博|ハク・バク||넓을 박|博物館|はくぶつかん|박물관|博物館で きょうりゅうを 見ました。|박물관에서 공룡을 봤어요.
+阪|ハン||비탈 판|大阪|おおさか|오사카|大阪で たこやきを たべました。|오사카에서 다코야키를 먹었어요.
+飯|ハン|めし|밥 반|ご飯|ごはん|밥|ご飯を たくさん たべました。|밥을 많이 먹었어요.
+飛|ヒ|と(ぶ)・と(ばす)|날 비|飛ぶ|とぶ|날다|とりが そらを 飛んで います。|새가 하늘을 날고 있어요.
+必|ヒツ|かなら(ず)|반드시 필|必ず|かならず|반드시|必ず しゅくだいを だして ください。|반드시 숙제를 내 주세요.
+票|ヒョウ||표 표|投票|とうひょう|투표|クラスで 投票して きめました。|반에서 투표로 정했어요.
+標|ヒョウ||표할 표|目標|もくひょう|목표|ことしの 目標を きめました。|올해 목표를 정했어요.
+不|フ・ブ||아닐 불|不思議|ふしぎ|이상함, 신기함|不思議な ゆめを 見ました。|신기한 꿈을 꿨어요.
+夫|フ・フウ|おっと|지아비 부|夫|おっと|남편|夫は りょうりが じょうずです。|남편은 요리를 잘해요.
+付|フ|つ(ける)・つ(く)|줄 부|付ける|つける|붙이다|シールを ノートに 付けました。|스티커를 공책에 붙였어요.
+府|フ||마을 부|京都府|きょうとふ|교토부|京都府には おてらが たくさん あります。|교토부에는 절이 많이 있어요.
+阜|フ||언덕 부|岐阜|ぎふ|기후(지명)|岐阜で うかいを 見ました。|기후에서 가마우지 낚시를 봤어요.
+富|フ・フウ|と(む)・とみ|부자 부|富士山|ふじさん|후지산|富士山は 日本で いちばん たかい 山です。|후지산은 일본에서 가장 높은 산이에요.
+副|フク||버금 부|副会長|ふくかいちょう|부회장|わたしは じどう会の 副会長です。|저는 학생회 부회장이에요.
+兵|ヘイ・ヒョウ||병사 병|兵士|へいし|병사|むかしの 兵士の はなしを よみました。|옛날 병사의 이야기를 읽었어요.
+別|ベツ|わか(れる)|다를 별|別れる|わかれる|헤어지다|えきで ともだちと 別れました。|역에서 친구와 헤어졌어요.
+辺|ヘン|あた(り)・べ|가 변|辺り|あたり|근처, 주변|この 辺りに コンビニは ありますか。|이 근처에 편의점 있어요?
+変|ヘン|か(わる)・か(える)|변할 변|変わる|かわる|바뀌다|しんごうが あおに 変わりました。|신호가 파란불로 바뀌었어요.
+便|ベン・ビン|たよ(り)|편할 편|便利|べんり|편리함|この アプリは 便利です。|이 앱은 편리해요.
+包|ホウ|つつ(む)|쌀 포|包む|つつむ|싸다, 포장하다|プレゼントを かみで 包みました。|선물을 종이로 포장했어요.
+法|ホウ・ハッ・ホッ||법 법|方法|ほうほう|방법|いい 方法を かんがえましょう。|좋은 방법을 생각해 봐요.
+望|ボウ・モウ|のぞ(む)|바랄 망|望む|のぞむ|바라다|みんなの しあわせを 望みます。|모두의 행복을 바라요.
+牧|ボク|まき|칠 목|牧場|ぼくじょう|목장|牧場で うしを 見ました。|목장에서 소를 봤어요.
+末|マツ・バツ|すえ|끝 말|週末|しゅうまつ|주말|週末は かぞくと すごします。|주말은 가족과 보내요.
+満|マン|み(ちる)・み(たす)|찰 만|満月|まんげつ|보름달|こんやは 満月です。|오늘 밤은 보름달이에요.
+未|ミ||아닐 미|未来|みらい|미래|未来の じぶんに てがみを かきました。|미래의 나에게 편지를 썼어요.
+民|ミン|たみ|백성 민|市民|しみん|시민|市民プールで およぎました。|시민 수영장에서 수영했어요.
+無|ム・ブ|な(い)|없을 무|無理|むり|무리|無理を しないで ください。|무리하지 마세요.
+約|ヤク||맺을 약|約束|やくそく|약속|あそぶ 約束を しました。|놀 약속을 했어요.
+勇|ユウ|いさ(む)|날랠 용|勇気|ゆうき|용기|勇気を だして はなしかけました。|용기를 내서 말을 걸었어요.
+要|ヨウ|かなめ・い(る)|요긴할 요|必要|ひつよう|필요|かさは 必要ですか。|우산이 필요해요?
+養|ヨウ|やしな(う)|기를 양|栄養|えいよう|영양|栄養の ある ものを たべましょう。|영양 있는 것을 먹어요.
+浴|ヨク|あ(びる)・あ(びせる)|목욕할 욕|浴びる|あびる|(물을) 끼얹다|ねる まえに シャワーを 浴びます。|자기 전에 샤워해요.
+利|リ|き(く)|이로울 리|便利|べんり|편리함|この かばんは ポケットが おおくて 便利です。|이 가방은 주머니가 많아서 편리해요.
+陸|リク||뭍 륙|陸上|りくじょう|육상|陸上きょうぎを ならって います。|육상 경기를 배우고 있어요.
+良|リョウ|よ(い)|어질 량|良い|よい|좋다|良い てんきですね。|좋은 날씨네요.
+料|リョウ||헤아릴 료|料理|りょうり|요리|ははの 料理が いちばん すきです。|엄마 요리를 가장 좋아해요.
+量|リョウ|はか(る)|헤아릴 량|量|りょう|양|ごはんの 量を へらしました。|밥 양을 줄였어요.
+輪|リン|わ|바퀴 륜|車輪|しゃりん|바퀴|じてんしゃの 車輪が まわります。|자전거 바퀴가 돌아요.
+類|ルイ|たぐ(い)|무리 류|種類|しゅるい|종류|いろいろな 種類の はなが あります。|여러 종류의 꽃이 있어요.
+令|レイ||하여금 령|命令|めいれい|명령|たいちょうの 命令に したがいます。|대장의 명령에 따라요.
+冷|レイ|つめ(たい)・ひ(える)・ひ(や)・ひ(やす)・さ(める)・さ(ます)|찰 랭|冷たい|つめたい|차갑다|冷たい みずで かおを あらいました。|차가운 물로 세수했어요.
+例|レイ|たと(える)|법식 례|例えば|たとえば|예를 들면|例えば りんごや みかんが すきです。|예를 들면 사과나 귤을 좋아해요.
+連|レン|つら(なる)・つら(ねる)・つ(れる)|이을 련|連れる|つれる|데리고 가다|いぬを 連れて さんぽします。|개를 데리고 산책해요.
+老|ロウ|お(いる)・ふ(ける)|늙을 로|老人|ろうじん|노인|老人ホームを たずねました。|양로원을 방문했어요.
+労|ロウ||일할 로|苦労|くろう|고생|苦労して いえを たてました。|고생해서 집을 지었어요.
+録|ロク||기록할 록|記録|きろく|기록|あたらしい 記録が でました。|새 기록이 나왔어요.
+圧|アツ||누를 압|気圧|きあつ|기압|山の 上は 気圧が ひくいです。|산 위는 기압이 낮아요.
+囲|イ|かこ(む)・かこ(う)|에워쌀 위|囲む|かこむ|둘러싸다|みんなで テーブルを 囲みました。|다 같이 테이블에 둘러앉았어요.
+移|イ|うつ(る)・うつ(す)|옮길 이|移る|うつる|옮기다|あたらしい いえに 移りました。|새 집으로 옮겼어요.
+因|イン|よ(る)|인할 인|原因|げんいん|원인|けんかの 原因は なんですか。|싸움의 원인은 뭐예요?
+永|エイ|なが(い)|길 영|永遠|えいえん|영원|この 思い出は 永遠に わすれません。|이 추억은 영원히 잊지 않을 거예요.
+営|エイ|いとな(む)|경영할 영|営業|えいぎょう|영업|この 店は 十じまで 営業して います。|이 가게는 10시까지 영업해요.
+衛|エイ||지킬 위|衛生|えいせい|위생|手を あらって 衛生に 気を つけます。|손을 씻어 위생에 신경 써요.
+易|エキ・イ|やさ(しい)|쉬울 이, 바꿀 역|易しい|やさしい|쉽다|この もんだいは 易しいです。|이 문제는 쉬워요.
+益|エキ・ヤク||더할 익|利益|りえき|이익|店の 利益が ふえました。|가게 이익이 늘었어요.
+液|エキ||진 액|液体|えきたい|액체|水は 液体です。|물은 액체예요.
+演|エン||펼 연|演じる|えんじる|연기하다|げきで おうさまを 演じました。|연극에서 임금님 역을 했어요.
+応|オウ|こた(える)|응할 응|応援|おうえん|응원|うんどうかいで 応援しました。|운동회에서 응원했어요.
+往|オウ||갈 왕|往復|おうふく|왕복|えきまで 往復 三十分です。|역까지 왕복 30분이에요.
+桜|オウ|さくら|벚나무 앵|桜|さくら|벚꽃|桜が まんかいです。|벚꽃이 만개했어요.
+可|カ||옳을 가|可能|かのう|가능|あしたなら 参加が 可能です。|내일이라면 참가 가능해요.
+仮|カ・ケ|かり|거짓 가|仮|かり|임시|仮の 名まえを つけました。|임시 이름을 붙였어요.
+価|カ|あたい|값 가|価格|かかく|가격|やさいの 価格が あがりました。|채소 가격이 올랐어요.
+河|カ|かわ|물 하|運河|うんが|운하|ふねが 運河を すすみます。|배가 운하를 지나가요.
+過|カ|す(ぎる)・す(ごす)・あやま(つ)・あやま(ち)|지날 과|過ごす|すごす|지내다|夏休みを たのしく 過ごしました。|여름방학을 즐겁게 보냈어요.
+快|カイ|こころよ(い)|쾌할 쾌|快晴|かいせい|쾌청|きょうは 快晴です。|오늘은 쾌청해요.
+解|カイ・ゲ|と(く)・と(かす)・と(ける)|풀 해|解く|とく|풀다|算数の もんだいを 解きました。|산수 문제를 풀었어요.
+格|カク・コウ||격식 격|合格|ごうかく|합격|しけんに 合格しました。|시험에 합격했어요.
+確|カク|たし(か)・たし(かめる)|굳을 확|確かめる|たしかめる|확인하다|こたえを もう 一ど 確かめます。|답을 한 번 더 확인해요.
+額|ガク|ひたい|이마 액|金額|きんがく|금액|ぜんぶで いくらの 金額ですか。|전부 얼마예요?
+刊|カン||새길 간|朝刊|ちょうかん|조간신문|ちちは 朝刊を よんで います。|아버지는 조간신문을 읽고 있어요.
+幹|カン|みき|줄기 간|幹|みき|줄기|この 木の 幹は ふといです。|이 나무 줄기는 굵어요.
+慣|カン|な(れる)・な(らす)|익숙할 관|慣れる|なれる|익숙해지다|あたらしい がっこうに 慣れました。|새 학교에 익숙해졌어요.
+眼|ガン・ゲン|まなこ|눈 안|眼鏡|めがね|안경|そふは 眼鏡を かけて います。|할아버지는 안경을 쓰고 계세요.
+紀|キ||벼리 기|世紀|せいき|세기|二十一世紀に うまれました。|21세기에 태어났어요.
+基|キ|もと・もとい|터 기|基本|きほん|기본|まず 基本を れんしゅうしましょう。|먼저 기본을 연습해요.
+寄|キ|よ(る)・よ(せる)|부칠 기|寄る|よる|들르다|かえりに 本やに 寄りました。|돌아오는 길에 서점에 들렀어요.
+規|キ||법 규|規則|きそく|규칙|学校の 規則を まもります。|학교 규칙을 지켜요.
+喜|キ|よろこ(ぶ)|기쁠 희|喜ぶ|よろこぶ|기뻐하다|プレゼントを もらって 喜びました。|선물을 받고 기뻐했어요.
+技|ギ|わざ|재주 기|技術|ぎじゅつ|기술|日本の 技術は すごいです。|일본의 기술은 대단해요.
+義|ギ||옳을 의|講義|こうぎ|강의|大学の 講義を ききました。|대학 강의를 들었어요.
+逆|ギャク|さか・さか(らう)|거스를 역|逆|ぎゃく|반대, 거꾸로|逆の ほうこうへ あるきました。|반대 방향으로 걸었어요.
+久|キュウ・ク|ひさ(しい)|오랠 구|久しぶり|ひさしぶり|오랜만|久しぶりに ともだちに あいました。|오랜만에 친구를 만났어요.
+旧|キュウ||예 구|旧友|きゅうゆう|옛 친구|旧友と むかしの はなしを しました。|옛 친구와 옛날이야기를 했어요.
+救|キュウ|すく(う)|구원할 구|救う|すくう|구하다|しょうぼうしが 人を 救いました。|소방관이 사람을 구했어요.
+居|キョ|い(る)|살 거|居間|いま|거실|かぞくで 居間に あつまりました。|가족이 거실에 모였어요.
+許|キョ|ゆる(す)|허락할 허|許す|ゆるす|용서하다, 허락하다|ともだちの まちがいを 許しました。|친구의 실수를 용서했어요.
+境|キョウ・ケイ|さかい|지경 경|境|さかい|경계|となりの いえとの 境に へいが あります。|옆집과의 경계에 담이 있어요.
+均|キン||고를 균|平均|へいきん|평균|テストの 平均は 八十てんです。|시험 평균은 80점이에요.
+禁|キン||금할 금|禁止|きんし|금지|ここは ちゅうしゃ禁止です。|여기는 주차 금지예요.
+句|ク||글귀 구|俳句|はいく|하이쿠|はるの 俳句を つくりました。|봄 하이쿠를 지었어요.
+型|ケイ|かた|모형 형|血液型|けつえきがた|혈액형|わたしの 血液型は A型です。|제 혈액형은 A형이에요.
+経|ケイ・キョウ|へ(る)|지날 경|経験|けいけん|경험|はじめての 経験でした。|처음 해 보는 경험이었어요.
+潔|ケツ|いさぎよ(い)|깨끗할 결|清潔|せいけつ|청결|ふくを 清潔に しましょう。|옷을 청결하게 해요.
+件|ケン||물건 건|事件|じけん|사건|ふしぎな 事件が おきました。|이상한 사건이 일어났어요.
+険|ケン|けわ(しい)|험할 험|危険|きけん|위험|川で あそぶのは 危険です。|강에서 노는 것은 위험해요.
+検|ケン||검사할 검|検査|けんさ|검사|びょういんで 検査を うけました。|병원에서 검사를 받았어요.
+限|ゲン|かぎ(る)|한할 한|限る|かぎる|한정하다|さんかは 十人に 限ります。|참가는 10명으로 한정해요.
+現|ゲン|あらわ(れる)・あらわ(す)|나타날 현|現れる|あらわれる|나타나다|くもの 間から 月が 現れました。|구름 사이로 달이 나타났어요.
+減|ゲン|へ(る)・へ(らす)|덜 감|減る|へる|줄다|おなかが 減りました。|배가 고파요.
+故|コ|ゆえ|연고 고|事故|じこ|사고|みちで 事故が ありました。|길에서 사고가 있었어요.
+個|コ||낱 개|一個|いっこ|한 개|あめを 一個 ください。|사탕 한 개 주세요.
+護|ゴ||도울 호|看護師|かんごし|간호사|あねは 看護師です。|언니는 간호사예요.
+効|コウ|き(く)|본받을 효|効く|きく|효과가 있다|この くすりは よく 効きます。|이 약은 잘 들어요.
+厚|コウ|あつ(い)|두터울 후|厚い|あつい|두껍다|この じしょは 厚いです。|이 사전은 두꺼워요.
+耕|コウ|たがや(す)|밭 갈 경|耕す|たがやす|(밭을) 갈다|はたけを 耕しました。|밭을 갈았어요.
+航|コウ||배 항|航空|こうくう|항공|航空ショーを 見に いきました。|에어쇼를 보러 갔어요.
+鉱|コウ||쇳돌 광|鉱山|こうざん|광산|むかし ここは 鉱山でした。|옛날 여기는 광산이었어요.
+構|コウ|かま(える)・かま(う)|얽을 구|構いません|かまいません|상관없습니다|ここに すわっても 構いませんか。|여기 앉아도 괜찮아요?
+興|コウ・キョウ|おこ(る)・おこ(す)|일 흥|興味|きょうみ|흥미|うちゅうに 興味が あります。|우주에 흥미가 있어요.
+講|コウ||외울 강|講堂|こうどう|강당|講堂に 全校生が あつまりました。|강당에 전교생이 모였어요.
+告|コク|つ(げる)|고할 고|報告|ほうこく|보고|せんせいに けっかを 報告しました。|선생님께 결과를 보고했어요.
+混|コン|ま(じる)・ま(ざる)・ま(ぜる)|섞을 혼|混ぜる|まぜる|섞다|あかと あおを 混ぜました。|빨강과 파랑을 섞었어요.
+査|サ||조사할 사|調査|ちょうさ|조사|川の 水を 調査しました。|강물을 조사했어요.
+再|サイ・サ|ふたた(び)|두 재|再び|ふたたび|다시|再び この まちに きたいです。|다시 이 마을에 오고 싶어요.
+災|サイ|わざわ(い)|재앙 재|災害|さいがい|재해|災害に そなえましょう。|재해에 대비해요.
+妻|サイ|つま|아내 처|妻|つま|아내|妻と りょこうに いきました。|아내와 여행을 갔어요.
+採|サイ|と(る)|캘 채|採る|とる|채집하다|山で きのこを 採りました。|산에서 버섯을 땄어요.
+際|サイ|きわ|즈음 제|国際|こくさい|국제|国際こうりゅうの イベントに いきました。|국제 교류 행사에 갔어요.
+在|ザイ|あ(る)|있을 재|現在|げんざい|현재|現在の じこくは 三じです。|현재 시각은 3시예요.
+財|ザイ・サイ||재물 재|財布|さいふ|지갑|財布を おとして しまいました。|지갑을 잃어버렸어요.
+罪|ザイ|つみ|허물 죄|罪|つみ|죄|うそを つくのは 罪です。|거짓말하는 것은 죄예요.
+殺|サツ・サイ・セツ|ころ(す)|죽일 살|殺虫剤|さっちゅうざい|살충제|殺虫剤で かを たいじしました。|살충제로 모기를 퇴치했어요.
+雑|ザツ・ゾウ||섞일 잡|雑誌|ざっし|잡지|本やで 雑誌を かいました。|서점에서 잡지를 샀어요.
+酸|サン|す(い)|실 산|酸素|さんそ|산소|植物は 酸素を だします。|식물은 산소를 내보내요.
+賛|サン||도울 찬|賛成|さんせい|찬성|その 意見に 賛成です。|그 의견에 찬성이에요.
+士|シ||선비 사|消防士|しょうぼうし|소방관|消防士に なりたいです。|소방관이 되고 싶어요.
+支|シ|ささ(える)|지탱할 지|支える|ささえる|받치다, 지지하다|かぞくが わたしを 支えて くれます。|가족이 저를 지지해 줘요.
+史|シ||역사 사|歴史|れきし|역사|日本の 歴史を べんきょうします。|일본 역사를 공부해요.
+志|シ|こころざ(す)・こころざし|뜻 지|志|こころざし|뜻, 포부|大きな 志を もって がんばります。|큰 뜻을 품고 노력해요.
+枝|シ|えだ|가지 지|枝|えだ|가지|木の 枝に とりが とまって います。|나뭇가지에 새가 앉아 있어요.
+師|シ||스승 사|教師|きょうし|교사|ははは 教師です。|엄마는 교사예요.
+資|シ||재물 자|資料|しりょう|자료|はっぴょうの 資料を つくりました。|발표 자료를 만들었어요.
+飼|シ|か(う)|기를 사|飼う|かう|(동물을) 기르다|ハムスターを 飼って います。|햄스터를 기르고 있어요.
+示|ジ・シ|しめ(す)|보일 시|示す|しめす|가리키다, 보이다|ゆびで ほうこうを 示しました。|손가락으로 방향을 가리켰어요.
+似|ジ|に(る)|닮을 사|似る|にる|닮다|わたしは ははに 似て います。|저는 엄마를 닮았어요.
+識|シキ||알 식|知識|ちしき|지식|本を よんで 知識を ふやします。|책을 읽어서 지식을 늘려요.
+質|シツ・シチ・チ||바탕 질|質問|しつもん|질문|せんせいに 質問しました。|선생님께 질문했어요.
+舎|シャ||집 사|校舎|こうしゃ|교사(학교 건물)|あたらしい 校舎が できました。|새 학교 건물이 생겼어요.
+謝|シャ|あやま(る)|사례할 사|謝る|あやまる|사과하다|ともだちに 謝りました。|친구에게 사과했어요.
+授|ジュ|さず(ける)・さず(かる)|줄 수|授業|じゅぎょう|수업|授業中は しずかに しましょう。|수업 중에는 조용히 해요.
+修|シュウ・シュ|おさ(める)・おさ(まる)|닦을 수|修理|しゅうり|수리|じてんしゃを 修理しました。|자전거를 수리했어요.
+述|ジュツ|の(べる)|펼 술|述べる|のべる|말하다, 진술하다|じぶんの 意見を 述べました。|제 의견을 말했어요.
+術|ジュツ||재주 술|美術|びじゅつ|미술|美術の じかんに えを かきました。|미술 시간에 그림을 그렸어요.
+準|ジュン||준할 준|準備|じゅんび|준비|えんそくの 準備を しました。|소풍 준비를 했어요.
+序|ジョ||차례 서|順序|じゅんじょ|순서|順序よく ならべましょう。|순서대로 늘어놓아요.
+招|ショウ|まね(く)|부를 초|招く|まねく|초대하다|ともだちを いえに 招きました。|친구를 집에 초대했어요.
+証|ショウ||증거 증|証明|しょうめい|증명|じぶんが ただしいと 証明しました。|제가 옳다는 것을 증명했어요.
+象|ショウ・ゾウ||코끼리 상|象|ぞう|코끼리|どうぶつえんで 象を 見ました。|동물원에서 코끼리를 봤어요.
+賞|ショウ||상줄 상|賞|しょう|상|えの コンクールで 賞を もらいました。|그림 대회에서 상을 받았어요.
+条|ジョウ||가지 조|条件|じょうけん|조건|あそぶ 条件は しゅくだいを する ことです。|노는 조건은 숙제를 하는 거예요.
+状|ジョウ||형상 상|年賀状|ねんがじょう|연하장|年賀状を 二十まい かきました。|연하장을 20장 썼어요.
+常|ジョウ|つね・とこ|떳떳할 상|非常口|ひじょうぐち|비상구|非常口は あちらです。|비상구는 저쪽이에요.
+情|ジョウ・セイ|なさ(け)|뜻 정|表情|ひょうじょう|표정|うれしそうな 表情を して います。|기쁜 표정을 짓고 있어요.
+織|ショク・シキ|お(る)|짤 직|織る|おる|짜다(직물)|はたで ぬのを 織りました。|베틀로 천을 짰어요.
+職|ショク||직분 직|職業|しょくぎょう|직업|しょうらいの 職業を かんがえます。|장래 직업을 생각해요.
+制|セイ||절제할 제|制服|せいふく|교복, 제복|ちゅうがっこうの 制服を きました。|중학교 교복을 입었어요.
+性|セイ・ショウ||성품 성|性格|せいかく|성격|あねは あかるい 性格です。|언니는 밝은 성격이에요.
+政|セイ・ショウ|まつりごと|정사 정|政治|せいじ|정치|社会の じかんに 政治を まなびました。|사회 시간에 정치를 배웠어요.
+勢|セイ|いきお(い)|형세 세|勢い|いきおい|기세|すごい 勢いで はしりました。|엄청난 기세로 달렸어요.
+精|セイ・ショウ||정할 정|精一杯|せいいっぱい|최선을 다함|精一杯 がんばりました。|최선을 다했어요.
+製|セイ||지을 제|製品|せいひん|제품|これは 日本の 製品です。|이것은 일본 제품이에요.
+税|ゼイ||세금 세|税金|ぜいきん|세금|税金は みんなの ために つかわれます。|세금은 모두를 위해 쓰여요.
+責|セキ|せ(める)|꾸짖을 책|責任|せきにん|책임|じぶんの 仕事に 責任を もちます。|제 일에 책임을 져요.
+績|セキ||길쌈할 적|成績|せいせき|성적|成績が あがりました。|성적이 올랐어요.
+接|セツ|つ(ぐ)|이을 접|直接|ちょくせつ|직접|せんせいに 直接 ききました。|선생님께 직접 물었어요.
+設|セツ|もう(ける)|베풀 설|設計|せっけい|설계|いえの 設計を しました。|집을 설계했어요.
+絶|ゼツ|た(える)・た(やす)・た(つ)|끊을 절|絶対|ぜったい|절대|絶対に あきらめません。|절대 포기하지 않아요.
+祖|ソ||할아비 조|祖母|そぼ|할머니|祖母の いえに とまりました。|할머니 댁에서 묵었어요.
+素|ソ・ス||본디 소|素直|すなお|솔직함, 순진함|かれは 素直な 子です。|그는 솔직한 아이예요.
+総|ソウ||다 총|総合|そうごう|종합|総合の じかんに しらべがくしゅうを しました。|종합 시간에 조사 학습을 했어요.
+造|ゾウ|つく(る)|지을 조|造る|つくる|만들다(크게)|ふねを 造る こうじょうです。|배를 만드는 공장이에요.
+像|ゾウ||모양 상|想像|そうぞう|상상|みらいを 想像するのは たのしいです。|미래를 상상하는 것은 즐거워요.
+増|ゾウ|ま(す)・ふ(える)・ふ(やす)|더할 증|増える|ふえる|늘다|クラスの 人数が 増えました。|반 인원이 늘었어요.
+則|ソク||법칙 칙|規則|きそく|규칙|規則ただしい 生活を しましょう。|규칙적인 생활을 해요.
+測|ソク|はか(る)|헤아릴 측|測る|はかる|재다|せの たかさを 測りました。|키를 쟀어요.
+属|ゾク||무리 속|所属|しょぞく|소속|サッカーぶに 所属して います。|축구부에 소속되어 있어요.
+率|ソツ・リツ|ひき(いる)|비율 률, 거느릴 솔|確率|かくりつ|확률|あめの 確率は 五十パーセントです。|비 올 확률은 50퍼센트예요.
+損|ソン|そこ(なう)・そこ(ねる)|덜 손|損|そん|손해|かいものを して 損を しました。|쇼핑을 해서 손해를 봤어요.
+貸|タイ|か(す)|빌릴 대|貸す|かす|빌려주다|ともだちに 本を 貸しました。|친구에게 책을 빌려줬어요.
+態|タイ||모습 태|態度|たいど|태도|まじめな 態度で ききます。|진지한 태도로 들어요.
+団|ダン・トン||둥글 단|布団|ふとん|이불|布団を ほしました。|이불을 널었어요.
+断|ダン|た(つ)・ことわ(る)|끊을 단|断る|ことわる|거절하다|さそいを 断りました。|권유를 거절했어요.
+築|チク|きず(く)|쌓을 축|建築|けんちく|건축|ふるい 建築を 見に いきました。|오래된 건축물을 보러 갔어요.
+貯|チョ||쌓을 저|貯金|ちょきん|저금|おこづかいを 貯金して います。|용돈을 저금하고 있어요.
+張|チョウ|は(る)|베풀 장|張る|はる|붙이다, 펴다|かべに ポスターを 張りました。|벽에 포스터를 붙였어요.
+停|テイ||머무를 정|停電|ていでん|정전|かみなりで 停電しました。|천둥 때문에 정전됐어요.
+提|テイ|さ(げる)|끌 제|提出|ていしゅつ|제출|しゅくだいを 提出しました。|숙제를 제출했어요.
+程|テイ|ほど|한도 정|程度|ていど|정도|十分 程度で つきます。|10분 정도면 도착해요.
+適|テキ||맞을 적|適当|てきとう|적당함|適当な 大きさに きって ください。|적당한 크기로 잘라 주세요.
+統|トウ|す(べる)|거느릴 통|伝統|でんとう|전통|日本の 伝統を まなびます。|일본의 전통을 배워요.
+堂|ドウ||집 당|食堂|しょくどう|식당|食堂で ひるごはんを たべました。|식당에서 점심을 먹었어요.
+銅|ドウ||구리 동|銅メダル|どうメダル|동메달|かけっこで 銅メダルを とりました。|달리기에서 동메달을 땄어요.
+導|ドウ|みちび(く)|인도할 도|指導|しどう|지도|コーチの 指導を うけました。|코치의 지도를 받았어요.
+得|トク|え(る)・う(る)|얻을 득|得意|とくい|자신 있음, 잘함|わたしは 算数が 得意です。|저는 산수를 잘해요.
+毒|ドク||독 독|毒|どく|독|この きのこには 毒が あります。|이 버섯에는 독이 있어요.
+独|ドク|ひと(り)|홀로 독|独り|ひとり|혼자|独りで るすばんを しました。|혼자서 집을 봤어요.
+任|ニン|まか(せる)・まか(す)|맡길 임|任せる|まかせる|맡기다|この 仕事は わたしに 任せて ください。|이 일은 저에게 맡겨 주세요.
+燃|ネン|も(える)・も(やす)・も(す)|탈 연|燃える|もえる|타다|たきびが 燃えて います。|모닥불이 타고 있어요.
+能|ノウ||능할 능|才能|さいのう|재능|かのじょは 音楽の 才能が あります。|그녀는 음악에 재능이 있어요.
+破|ハ|やぶ(る)・やぶ(れる)|깨뜨릴 파|破れる|やぶれる|찢어지다|ふくろが 破れました。|봉지가 찢어졌어요.
+犯|ハン|おか(す)|범할 범|犯人|はんにん|범인|けいさつが 犯人を つかまえました。|경찰이 범인을 잡았어요.
+判|ハン・バン||판단할 판|判断|はんだん|판단|じぶんで 判断して ください。|스스로 판단하세요.
+版|ハン||판목 판|出版|しゅっぱん|출판|せんせいが 本を 出版しました。|선생님이 책을 출판했어요.
+比|ヒ|くら(べる)|견줄 비|比べる|くらべる|비교하다|ふたつの おもさを 比べました。|두 개의 무게를 비교했어요.
+肥|ヒ|こ(える)・こえ・こ(やす)・こ(やし)|살찔 비|肥料|ひりょう|비료|はたけに 肥料を まきました。|밭에 비료를 뿌렸어요.
+非|ヒ||아닐 비|非常|ひじょう|비상, 대단히|非常に たのしい 一日でした。|대단히 즐거운 하루였어요.
+費|ヒ|つい(やす)・つい(える)|쓸 비|費用|ひよう|비용|りょこうの 費用を けいさんしました。|여행 비용을 계산했어요.
+備|ビ|そな(える)・そな(わる)|갖출 비|備える|そなえる|대비하다|じしんに 備えて 水を かいました。|지진에 대비해 물을 샀어요.
+評|ヒョウ||평할 평|評判|ひょうばん|평판|この 店は 評判が いいです。|이 가게는 평판이 좋아요.
+貧|ヒン・ビン|まず(しい)|가난할 빈|貧しい|まずしい|가난하다|むかしの くらしは 貧しかったです。|옛날 생활은 가난했어요.
+布|フ|ぬの|베 포|布|ぬの|천|布で ふくろを つくりました。|천으로 주머니를 만들었어요.
+婦|フ||며느리 부|夫婦|ふうふ|부부|となりの 夫婦は なかが いいです。|옆집 부부는 사이가 좋아요.
+武|ブ・ム||호반 무|武士|ぶし|무사|武士の えいがを 見ました。|무사 영화를 봤어요.
+復|フク||회복할 복|復習|ふくしゅう|복습|いえで 復習を しました。|집에서 복습했어요.
+複|フク||겹칠 복|複雑|ふくざつ|복잡함|この もんだいは 複雑です。|이 문제는 복잡해요.
+仏|ブツ|ほとけ|부처 불|仏|ほとけ|부처|おてらに 仏さまが あります。|절에 부처님이 있어요.
+粉|フン|こ・こな|가루 분|小麦粉|こむぎこ|밀가루|小麦粉で パンを つくります。|밀가루로 빵을 만들어요.
+編|ヘン|あ(む)|엮을 편|編む|あむ|뜨다, 엮다|ははが セーターを 編んで くれました。|엄마가 스웨터를 떠 줬어요.
+弁|ベン||고깔 변|弁当|べんとう|도시락|お弁当を もって えんそくに いきます。|도시락을 가지고 소풍 가요.
+保|ホ|たも(つ)|지킬 보|保健室|ほけんしつ|보건실|ぐあいが わるくて 保健室へ いきました。|몸이 안 좋아서 보건실에 갔어요.
+墓|ボ|はか|무덤 묘|お墓|おはか|무덤, 묘|おぼんに お墓まいりを しました。|오봉에 성묘했어요.
+報|ホウ|むく(いる)|갚을 보|天気予報|てんきよほう|일기 예보|天気予報では あしたは はれです。|일기 예보에서는 내일은 맑대요.
+豊|ホウ|ゆた(か)|풍년 풍|豊か|ゆたか|풍부함|この まちは 自然が 豊かです。|이 마을은 자연이 풍부해요.
+防|ボウ|ふせ(ぐ)|막을 방|防ぐ|ふせぐ|막다|かぜを 防ぐために 手を あらいます。|감기를 막기 위해 손을 씻어요.
+貿|ボウ||무역할 무|貿易|ぼうえき|무역|日本は 多くの 国と 貿易を して います。|일본은 많은 나라와 무역을 해요.
+暴|ボウ・バク|あば(く)・あば(れる)|사나울 폭|暴れる|あばれる|날뛰다|いぬが 暴れて たいへんでした。|개가 날뛰어서 큰일이었어요.
+脈|ミャク||줄기 맥|山脈|さんみゃく|산맥|とおくに 山脈が 見えます。|멀리 산맥이 보여요.
+務|ム|つと(める)・つと(まる)|힘쓸 무|事務所|じむしょ|사무소|父の 事務所へ いきました。|아버지 사무소에 갔어요.
+夢|ム|ゆめ|꿈 몽|夢|ゆめ|꿈|わたしの 夢は パイロットです。|제 꿈은 파일럿이에요.
+迷|メイ|まよ(う)|미혹할 미|迷う|まよう|헤매다|みちに 迷いました。|길을 잃었어요.
+綿|メン|わた|솜 면|綿|わた|솜|綿の ように やわらかいです。|솜처럼 부드러워요.
+輸|ユ||보낼 수|輸入|ゆにゅう|수입|バナナは 外国から 輸入して います。|바나나는 외국에서 수입해요.
+余|ヨ|あま(る)・あま(す)|남을 여|余る|あまる|남다|おかしが 二つ 余りました。|과자가 두 개 남았어요.
+容|ヨウ||얼굴 용|内容|ないよう|내용|本の 内容を まとめました。|책 내용을 정리했어요.
+略|リャク||간략할 략|省略|しょうりゃく|생략|せつめいを 省略します。|설명을 생략할게요.
+留|リュウ・ル|と(める)・と(まる)|머무를 류|留守|るす|부재중|ははは いま 留守です。|엄마는 지금 집에 없어요.
+領|リョウ||거느릴 령|大統領|だいとうりょう|대통령|アメリカの 大統領が きました。|미국 대통령이 왔어요.
+歴|レキ||지날 력|歴史|れきし|역사|この まちは 歴史が ふるいです。|이 마을은 역사가 오래됐어요.
+胃|イ||밥통 위|胃|い|위(장기)|たべすぎて 胃が いたいです。|과식해서 위가 아파요.
+異|イ|こと|다를 이|異なる|ことなる|다르다|ふたりの 意見は 異なります。|두 사람의 의견은 달라요.
+遺|イ・ユイ||남길 유|遺産|いさん|유산|世界遺産を 見に いきました。|세계 유산을 보러 갔어요.
+域|イキ||지경 역|地域|ちいき|지역|地域の おまつりに さんかしました。|지역 축제에 참가했어요.
+宇|ウ||집 우|宇宙|うちゅう|우주|宇宙に いって みたいです。|우주에 가 보고 싶어요.
+映|エイ|うつ(る)・うつ(す)・は(える)|비칠 영|映画|えいが|영화|日よう日に 映画を 見ました。|일요일에 영화를 봤어요.
+延|エン|の(びる)・の(べる)・の(ばす)|늘일 연|延期|えんき|연기(미룸)|あめで 運動会が 延期に なりました。|비 때문에 운동회가 연기됐어요.
+沿|エン|そ(う)|물 따라갈 연|沿う|そう|따르다|川に 沿って あるきました。|강을 따라 걸었어요.
+恩|オン||은혜 은|恩返し|おんがえし|은혜 갚기|つるの 恩返しの はなしを よみました。|두루미의 은혜 갚기 이야기를 읽었어요.
+我|ガ|われ・わ|나 아|我が家|わがや|우리 집|我が家の いぬは かわいいです。|우리 집 개는 귀여워요.
+灰|カイ|はい|재 회|灰色|はいいろ|회색|そらが 灰色に なりました。|하늘이 회색이 됐어요.
+拡|カク||넓힐 확|拡大|かくだい|확대|しゃしんを 拡大しました。|사진을 확대했어요.
+革|カク|かわ|가죽 혁|革|かわ|가죽|革の くつを かいました。|가죽 신발을 샀어요.
+閣|カク||집 각|内閣|ないかく|내각|あたらしい 内閣が できました。|새 내각이 생겼어요.
+割|カツ|わ(る)・わり・わ(れる)・さ(く)|벨 할|割る|わる|깨다, 나누다|たまごを 割りました。|달걀을 깼어요.
+株||かぶ|그루 주|株|かぶ|그루, 주식|木の 株に すわって やすみました。|나무 그루터기에 앉아 쉬었어요.
+干|カン|ほ(す)・ひ(る)|방패 간|干す|ほす|말리다|せんたくものを 干しました。|빨래를 널었어요.
+巻|カン|ま(く)・まき|책 권|巻く|まく|감다|首に マフラーを 巻きました。|목에 머플러를 둘렀어요.
+看|カン||볼 간|看板|かんばん|간판|大きな 看板が 見えます。|큰 간판이 보여요.
+簡|カン||간략할 간|簡単|かんたん|간단함|この もんだいは 簡単です。|이 문제는 간단해요.
+危|キ|あぶ(ない)・あや(うい)・あや(ぶむ)|위태할 위|危ない|あぶない|위험하다|そこは 危ないですよ。|거기는 위험해요.
+机|キ|つくえ|책상 궤|机|つくえ|책상|机の 上を かたづけました。|책상 위를 정리했어요.
+揮|キ||휘두를 휘|指揮|しき|지휘|合唱の 指揮を しました。|합창 지휘를 했어요.
+貴|キ|たっと(い)・とうと(い)・たっと(ぶ)・とうと(ぶ)|귀할 귀|貴重|きちょう|귀중함|貴重な 体験を しました。|귀중한 체험을 했어요.
+疑|ギ|うたが(う)|의심할 의|疑う|うたがう|의심하다|かれの はなしを 疑いました。|그의 이야기를 의심했어요.
+吸|キュウ|す(う)|마실 흡|吸う|すう|들이마시다|ふかく いきを 吸って ください。|숨을 깊이 들이마셔 주세요.
+供|キョウ・ク|そな(える)・とも|이바지할 공|子供|こども|아이|子供たちが あそんで います。|아이들이 놀고 있어요.
+胸|キョウ|むね・むな|가슴 흉|胸|むね|가슴|きんちょうで 胸が どきどきします。|긴장해서 가슴이 두근거려요.
+郷|キョウ・ゴウ||시골 향|故郷|こきょう|고향|夏に 故郷へ かえります。|여름에 고향에 돌아가요.
+勤|キン・ゴン|つと(める)・つと(まる)|부지런할 근|勤める|つとめる|근무하다|あには ぎんこうに 勤めて います。|형은 은행에 근무해요.
+筋|キン|すじ|힘줄 근|筋肉|きんにく|근육|うんどうで 筋肉が つきました。|운동으로 근육이 붙었어요.
+系|ケイ||맬 계|系統|けいとう|계통|この バスは どの 系統ですか。|이 버스는 몇 번 계통이에요?
+敬|ケイ|うやま(う)|공경 경|敬語|けいご|경어, 존댓말|目上の 人には 敬語を つかいます。|윗사람에게는 존댓말을 써요.
+警|ケイ||경계할 경|警察|けいさつ|경찰|警察に おとしものを とどけました。|경찰에 분실물을 신고했어요.
+劇|ゲキ||심할 극|劇|げき|연극|学芸会で 劇を しました。|학예회에서 연극을 했어요.
+激|ゲキ|はげ(しい)|격할 격|激しい|はげしい|격렬하다|激しい あめが ふって います。|비가 세차게 내리고 있어요.
+穴|ケツ|あな|구멍 혈|穴|あな|구멍|くつしたに 穴が あいて います。|양말에 구멍이 났어요.
+券|ケン||문서 권|乗車券|じょうしゃけん|승차권|えきで 乗車券を かいました。|역에서 승차권을 샀어요.
+絹|ケン|きぬ|비단 견|絹|きぬ|비단|この スカーフは 絹で できて います。|이 스카프는 비단으로 만들어졌어요.
+権|ケン・ゴン||권세 권|権利|けんり|권리|子どもにも 権利が あります。|아이에게도 권리가 있어요.
+憲|ケン||법 헌|憲法|けんぽう|헌법|社会で 憲法を まなびました。|사회 시간에 헌법을 배웠어요.
+源|ゲン|みなもと|근원 원|源|みなもと|근원, 원천|この 川の 源は 山です。|이 강의 근원은 산이에요.
+厳|ゲン・ゴン|おごそ(か)・きび(しい)|엄할 엄|厳しい|きびしい|엄하다|コーチは とても 厳しいです。|코치는 아주 엄해요.
+己|コ・キ|おのれ|몸 기|自己紹介|じこしょうかい|자기소개|クラスで 自己紹介を しました。|반에서 자기소개를 했어요.
+呼|コ|よ(ぶ)|부를 호|呼ぶ|よぶ|부르다|なまえを 呼ばれました。|이름이 불렸어요.
+誤|ゴ|あやま(る)|그르칠 오|誤り|あやまり|잘못, 오류|ぶんしょうの 誤りを なおしました。|글의 오류를 고쳤어요.
+后|コウ||임금 후|皇后|こうごう|황후|皇后さまが こられました。|황후께서 오셨어요.
+孝|コウ||효도 효|親孝行|おやこうこう|효도|親孝行を したいです。|효도하고 싶어요.
+皇|コウ・オウ||임금 황|天皇|てんのう|천황|天皇の たんじょうびは しゅくじつです。|천황의 생일은 공휴일이에요.
+紅|コウ・ク|べに・くれない|붉을 홍|紅葉|こうよう|단풍|山の 紅葉が きれいです。|산의 단풍이 예뻐요.
+降|コウ|お(りる)・お(ろす)・ふ(る)|내릴 강|降る|ふる|(비·눈이) 내리다|雪が 降って きました。|눈이 내리기 시작했어요.
+鋼|コウ|はがね|강철 강|鉄鋼|てっこう|철강|この まちには 鉄鋼の こうじょうが あります。|이 마을에는 철강 공장이 있어요.
+刻|コク|きざ(む)|새길 각|時刻|じこく|시각|でんしゃの 時刻を しらべました。|전철 시각을 알아봤어요.
+穀|コク||곡식 곡|穀物|こくもつ|곡물|こめや むぎは 穀物です。|쌀이나 보리는 곡물이에요.
+骨|コツ|ほね|뼈 골|骨|ほね|뼈|さかなの 骨に 気を つけて ください。|생선 가시를 조심하세요.
+困|コン|こま(る)|곤할 곤|困る|こまる|곤란하다|かさが なくて 困りました。|우산이 없어서 곤란했어요.
+砂|サ・シャ|すな|모래 사|砂|すな|모래|砂場で 山を つくりました。|모래밭에서 산을 만들었어요.
+座|ザ|すわ(る)|자리 좌|座る|すわる|앉다|いすに 座って ください。|의자에 앉아 주세요.
+済|サイ|す(む)・す(ます)|건널 제|済む|すむ|끝나다|しゅくだいが 済みました。|숙제가 끝났어요.
+裁|サイ|た(つ)・さば(く)|마를 재|裁判|さいばん|재판|裁判の ニュースを 見ました。|재판 뉴스를 봤어요.
+策|サク||꾀 책|対策|たいさく|대책|あつさ 対策を しましょう。|더위 대책을 세워요.
+冊|サツ・サク||책 책|一冊|いっさつ|한 권|本を 一冊 かりました。|책을 한 권 빌렸어요.
+蚕|サン|かいこ|누에 잠|蚕|かいこ|누에|蚕は きぬの いとを だします。|누에는 비단실을 뽑아요.
+至|シ|いた(る)|이를 지|至る|いたる|이르다|やまの ちょうじょうに 至りました。|산 정상에 이르렀어요.
+私|シ|わたくし・わたし|사사 사|私|わたし|나, 저|私の なまえは はなこです。|제 이름은 하나코예요.
+姿|シ|すがた|모양 자|姿|すがた|모습|ははの 後ろ姿が 見えました。|엄마의 뒷모습이 보였어요.
+視|シ||볼 시|視力|しりょく|시력|視力けんさを うけました。|시력 검사를 받았어요.
+詞|シ||말 사|歌詞|かし|가사|歌詞を おぼえて うたいました。|가사를 외워서 노래했어요.
+誌|シ||기록할 지|雑誌|ざっし|잡지|まんが雑誌を よみました。|만화 잡지를 읽었어요.
+磁|ジ||자석 자|磁石|じしゃく|자석|磁石で くぎを あつめました。|자석으로 못을 모았어요.
+射|シャ|い(る)|쏠 사|注射|ちゅうしゃ|주사|びょういんで 注射を しました。|병원에서 주사를 맞았어요.
+捨|シャ|す(てる)|버릴 사|捨てる|すてる|버리다|ごみを ごみばこに 捨てます。|쓰레기를 쓰레기통에 버려요.
+尺|シャク||자 척|尺|しゃく|척(길이 단위)|むかしは 長さを 尺で はかりました。|옛날에는 길이를 척으로 쟀어요.
+若|ジャク・ニャク|わか(い)・も(しくは)|같을 약|若い|わかい|젊다|おじさんは まだ 若いです。|삼촌은 아직 젊어요.
+樹|ジュ||나무 수|樹木|じゅもく|수목|こうえんには 樹木が おおいです。|공원에는 나무가 많아요.
+収|シュウ|おさ(める)・おさ(まる)|거둘 수|収穫|しゅうかく|수확|あきは 米の 収穫の きせつです。|가을은 쌀 수확 철이에요.
+宗|シュウ・ソウ||마루 종|宗教|しゅうきょう|종교|せかいには いろいろな 宗教が あります。|세계에는 여러 종교가 있어요.
+就|シュウ・ジュ|つ(く)・つ(ける)|나아갈 취|就職|しゅうしょく|취직|あには 会社に 就職しました。|형은 회사에 취직했어요.
+衆|シュウ・シュ||무리 중|観衆|かんしゅう|관중|観衆が はくしゅしました。|관중이 박수를 쳤어요.
+従|ジュウ・ショウ・ジュ|したが(う)・したが(える)|좇을 종|従う|したがう|따르다|せんせいの しじに 従います。|선생님의 지시에 따라요.
+縦|ジュウ|たて|세로 종|縦|たて|세로|紙を 縦に おりました。|종이를 세로로 접었어요.
+縮|シュク|ちぢ(む)・ちぢ(まる)・ちぢ(める)・ちぢ(れる)・ちぢ(らす)|줄일 축|縮む|ちぢむ|줄어들다|セーターが せんたくで 縮みました。|스웨터가 빨래해서 줄었어요.
+熟|ジュク|う(れる)|익을 숙|熟す|じゅくす|익다|かきの みが 熟しました。|감이 익었어요.
+純|ジュン||순수할 순|単純|たんじゅん|단순함|この ゲームは 単純です。|이 게임은 단순해요.
+処|ショ||곳 처|処理|しょり|처리|ごみを ただしく 処理します。|쓰레기를 올바르게 처리해요.
+署|ショ||마을 서|消防署|しょうぼうしょ|소방서|消防署を けんがくしました。|소방서를 견학했어요.
+諸|ショ||모두 제|諸国|しょこく|여러 나라|アジア諸国を りょこうしました。|아시아 여러 나라를 여행했어요.
+除|ジョ・ジ|のぞ(く)|덜 제|掃除|そうじ|청소|きょうしつの 掃除を しました。|교실 청소를 했어요.
+承|ショウ|うけたまわ(る)|이을 승|承知|しょうち|알아들음, 승낙|はい、承知しました。|네, 알겠습니다.
+将|ショウ||장수 장|将来|しょうらい|장래|将来の ゆめは いしゃです。|장래 희망은 의사예요.
+傷|ショウ|きず・いた(む)・いた(める)|다칠 상|傷|きず|상처|ひざの 傷が なおりました。|무릎 상처가 나았어요.
+障|ショウ|さわ(る)|막을 장|故障|こしょう|고장|テレビが 故障しました。|텔레비전이 고장 났어요.
+蒸|ジョウ|む(す)・む(れる)・む(らす)|찔 증|蒸す|むす|찌다|さつまいもを 蒸しました。|고구마를 쪘어요.
+針|シン|はり|바늘 침|針|はり|바늘|時計の 針が 三じを さして います。|시곗바늘이 3시를 가리키고 있어요.
+仁|ジン・ニ||어질 인|仁王|におう|인왕상|おてらの 門に 仁王が 立って います。|절 문에 인왕상이 서 있어요.
+垂|スイ|た(れる)・た(らす)|드리울 수|垂直|すいちょく|수직|線を 垂直に ひきました。|선을 수직으로 그었어요.
+推|スイ|お(す)|밀 추|推理|すいり|추리|推理しょうせつが すきです。|추리 소설을 좋아해요.
+寸|スン||마디 촌|寸法|すんぽう|치수|カーテンの 寸法を はかりました。|커튼 치수를 쟀어요.
+盛|セイ・ジョウ|も(る)・さか(る)・さか(ん)|성할 성|盛る|もる|담다|ごはんを おちゃわんに 盛りました。|밥을 밥공기에 담았어요.
+聖|セイ||성인 성|聖火|せいか|성화|オリンピックの 聖火を 見ました。|올림픽 성화를 봤어요.
+誠|セイ|まこと|정성 성|誠実|せいじつ|성실함|かれは とても 誠実な 人です。|그는 아주 성실한 사람이에요.
+舌|ゼツ|した|혀 설|舌|した|혀|あつい スープで 舌を やけどしました。|뜨거운 수프에 혀를 데었어요.
+宣|セン||베풀 선|宣言|せんげん|선언|せんしゅ 宣言を しました。|선수 선서를 했어요.
+専|セン|もっぱ(ら)|오로지 전|専門|せんもん|전문|あねは えいごが 専門です。|언니는 영어가 전공이에요.
+泉|セン|いずみ|샘 천|温泉|おんせん|온천|家族で 温泉に いきました。|가족끼리 온천에 갔어요.
+洗|セン|あら(う)|씻을 세|洗う|あらう|씻다|おさらを 洗いました。|접시를 씻었어요.
+染|セン|そ(める)・そ(まる)・し(みる)・し(み)|물들 염|染める|そめる|물들이다|ぬのを あおく 染めました。|천을 파랗게 물들였어요.
+銭|セン|ぜに|돈 전|小銭|こぜに|잔돈|小銭で ジュースを かいました。|잔돈으로 주스를 샀어요.
+善|ゼン|よ(い)|착할 선|改善|かいぜん|개선|くらしを 改善しましょう。|생활을 개선해요.
+奏|ソウ|かな(でる)|아뢸 주|演奏|えんそう|연주|ピアノを 演奏しました。|피아노를 연주했어요.
+窓|ソウ|まど|창 창|窓|まど|창문|窓から うみが 見えます。|창문에서 바다가 보여요.
+創|ソウ|つく(る)|비롯할 창|創作|そうさく|창작|創作ダンスを おどりました。|창작 댄스를 췄어요.
+装|ソウ・ショウ|よそお(う)|꾸밀 장|服装|ふくそう|복장|うごきやすい 服装で きて ください。|움직이기 편한 복장으로 오세요.
+層|ソウ||층 층|高層|こうそう|고층|高層ビルが ならんで います。|고층 빌딩이 늘어서 있어요.
+操|ソウ|みさお・あやつ(る)|잡을 조|体操|たいそう|체조|朝 ラジオ体操を します。|아침에 라디오 체조를 해요.
+蔵|ゾウ|くら|감출 장|冷蔵庫|れいぞうこ|냉장고|冷蔵庫に ぎゅうにゅうを いれました。|냉장고에 우유를 넣었어요.
+臓|ゾウ||오장 장|心臓|しんぞう|심장|はしると 心臓が どきどきします。|달리면 심장이 두근거려요.
+存|ソン・ゾン||있을 존|保存|ほぞん|보존, 저장|データを 保存しました。|데이터를 저장했어요.
+尊|ソン|たっと(い)・とうと(い)・たっと(ぶ)・とうと(ぶ)|높을 존|尊敬|そんけい|존경|わたしは 父を 尊敬して います。|저는 아버지를 존경해요.
+退|タイ|しりぞ(く)・しりぞ(ける)|물러날 퇴|退院|たいいん|퇴원|そぼが 退院しました。|할머니가 퇴원하셨어요.
+宅|タク||집 택|帰宅|きたく|귀가|六じに 帰宅しました。|6시에 귀가했어요.
+担|タン|かつ(ぐ)・にな(う)|멜 담|担任|たんにん|담임|担任の せんせいは やさしいです。|담임 선생님은 다정해요.
+探|タン|さぐ(る)・さが(す)|찾을 탐|探す|さがす|찾다|なくした かぎを 探しました。|잃어버린 열쇠를 찾았어요.
+誕|タン||낳을 탄|誕生日|たんじょうび|생일|きょうは わたしの 誕生日です。|오늘은 제 생일이에요.
+段|ダン||층계 단|階段|かいだん|계단|階段を のぼって 二かいへ いきます。|계단을 올라 2층으로 가요.
+暖|ダン|あたた(か)・あたた(かい)・あたた(まる)・あたた(める)|따뜻할 난|暖かい|あたたかい|따뜻하다|きょうは 暖かい 日です。|오늘은 따뜻한 날이에요.
+値|チ|ね・あたい|값 치|値段|ねだん|가격|この ふくの 値段は いくらですか。|이 옷 가격은 얼마예요?
+宙|チュウ||집 주|宇宙|うちゅう|우주|宇宙には ほしが たくさん あります。|우주에는 별이 많이 있어요.
+忠|チュウ||충성 충|忠実|ちゅうじつ|충실함|いぬは かいぬしに 忠実です。|개는 주인에게 충실해요.
+著|チョ|あらわ(す)・いちじる(しい)|나타날 저|著者|ちょしゃ|저자|この 本の 著者に あいました。|이 책의 저자를 만났어요.
+庁|チョウ||관청 청|県庁|けんちょう|현청|県庁を けんがくしました。|현청을 견학했어요.
+頂|チョウ|いただ(く)・いただき|정수리 정|頂上|ちょうじょう|정상|山の 頂上に つきました。|산 정상에 도착했어요.
+腸|チョウ||창자 장|大腸|だいちょう|대장|大腸の はたらきを まなびました。|대장의 기능을 배웠어요.
+潮|チョウ|しお|조수 조|潮|しお|조수, 바닷물|潮が ひいて かいが とれました。|물이 빠져서 조개를 캤어요.
+賃|チン||품삯 임|家賃|やちん|집세|家賃を はらいました。|집세를 냈어요.
+痛|ツウ|いた(い)・いた(む)・いた(める)|아플 통|痛い|いたい|아프다|はが 痛いです。|이가 아파요.
+敵|テキ|かたき|대적할 적|敵|てき|적|ゲームで 敵を たおしました。|게임에서 적을 쓰러뜨렸어요.
+展|テン||펼 전|展覧会|てんらんかい|전람회|えの 展覧会に いきました。|그림 전람회에 갔어요.
+討|トウ|う(つ)|칠 토|討論|とうろん|토론|クラスで 討論しました。|반에서 토론했어요.
+党|トウ||무리 당|政党|せいとう|정당|日本には いくつも 政党が あります。|일본에는 정당이 여러 개 있어요.
+糖|トウ||엿 당|砂糖|さとう|설탕|コーヒーに 砂糖を いれます。|커피에 설탕을 넣어요.
+届||とど(ける)・とど(く)|이를 계|届く|とどく|도착하다, 닿다|にもつが 届きました。|짐이 도착했어요.
+難|ナン|かた(い)・むずか(しい)|어려울 난|難しい|むずかしい|어렵다|この もんだいは 難しいです。|이 문제는 어려워요.
+乳|ニュウ|ちち・ち|젖 유|牛乳|ぎゅうにゅう|우유|まいあさ 牛乳を のみます。|매일 아침 우유를 마셔요.
+認|ニン|みと(める)|알 인|認める|みとめる|인정하다|じぶんの まちがいを 認めました。|제 잘못을 인정했어요.
+納|ノウ・ナッ・ナ・ナン・トウ|おさ(める)・おさ(まる)|들일 납|納豆|なっとう|낫토|朝ごはんに 納豆を たべます。|아침밥으로 낫토를 먹어요.
+脳|ノウ||골 뇌|頭脳|ずのう|두뇌|かれは 頭脳が すぐれて います。|그는 두뇌가 뛰어나요.
+派|ハ||갈래 파|立派|りっぱ|훌륭함|立派な いえですね。|훌륭한 집이네요.
+拝|ハイ|おが(む)|절 배|拝む|おがむ|절하다, 빌다|神社で 手を あわせて 拝みました。|신사에서 손을 모아 빌었어요.
+背|ハイ|せ・せい・そむ(く)・そむ(ける)|등 배|背|せ|키, 등|あには 背が たかいです。|형은 키가 커요.
+肺|ハイ||허파 폐|肺|はい|폐|ふかく いきを すって 肺を ふくらませます。|숨을 깊이 들이마셔 폐를 부풀려요.
+俳|ハイ||배우 배|俳優|はいゆう|배우|すきな 俳優が テレビに でて います。|좋아하는 배우가 텔레비전에 나와요.
+班|ハン||나눌 반|班|はん|조, 반|三つの 班に わかれました。|세 조로 나뉘었어요.
+晩|バン||늦을 만|今晩|こんばん|오늘 밤|今晩は カレーです。|오늘 저녁은 카레예요.
+否|ヒ|いな|아닐 부|否定|ひてい|부정|かれは うわさを 否定しました。|그는 소문을 부정했어요.
+批|ヒ||비평할 비|批判|ひはん|비판|人を 批判するのは かんたんです。|남을 비판하는 것은 쉬워요.
+秘|ヒ|ひ(める)|숨길 비|秘密|ひみつ|비밀|これは ふたりの 秘密です。|이건 우리 둘만의 비밀이에요.
+俵|ヒョウ|たわら|나누어 줄 표|米俵|こめだわら|쌀가마니|米俵を かついで はこびました。|쌀가마니를 메고 날랐어요.
+腹|フク|はら|배 복|お腹|おなか|배|お腹が すきました。|배가 고파요.
+奮|フン|ふる(う)|떨칠 분|興奮|こうふん|흥분|しあいを 見て 興奮しました。|시합을 보고 흥분했어요.
+並|ヘイ|なみ・なら(べる)・なら(ぶ)・なら(びに)|나란히 병|並ぶ|ならぶ|줄을 서다|みせの 前に 人が 並んで います。|가게 앞에 사람들이 줄 서 있어요.
+陛|ヘイ||대궐 섬돌 폐|陛下|へいか|폐하|天皇陛下の おことばを ききました。|천황 폐하의 말씀을 들었어요.
+閉|ヘイ|と(じる)・と(ざす)・し(める)・し(まる)|닫을 폐|閉める|しめる|닫다|ドアを 閉めて ください。|문을 닫아 주세요.
+片|ヘン|かた|조각 편|片付ける|かたづける|정리하다|おもちゃを 片付けました。|장난감을 정리했어요.
+補|ホ|おぎな(う)|기울 보|補う|おぎなう|보충하다|たりない ぶんを 補いました。|부족한 부분을 보충했어요.
+暮|ボ|く(れる)・く(らす)|저물 모|暮らす|くらす|살다, 생활하다|いなかで 暮らして います。|시골에서 살고 있어요.
+宝|ホウ|たから|보배 보|宝物|たからもの|보물|この しゃしんは わたしの 宝物です。|이 사진은 제 보물이에요.
+訪|ホウ|おとず(れる)・たず(ねる)|찾을 방|訪ねる|たずねる|방문하다|せんせいの いえを 訪ねました。|선생님 댁을 방문했어요.
+亡|ボウ・モウ|な(い)|망할 망|亡くなる|なくなる|돌아가시다|そふは きょねん 亡くなりました。|할아버지는 작년에 돌아가셨어요.
+忘|ボウ|わす(れる)|잊을 망|忘れる|わすれる|잊다|しゅくだいを 忘れました。|숙제를 잊었어요.
+棒|ボウ||막대 봉|鉄棒|てつぼう|철봉|鉄棒で さかあがりが できました。|철봉에서 거꾸로 오르기를 했어요.
+枚|マイ||낱 매|一枚|いちまい|한 장|かみを 一枚 ください。|종이 한 장 주세요.
+幕|マク・バク||장막 막|開幕|かいまく|개막|オリンピックが 開幕しました。|올림픽이 개막했어요.
+密|ミツ||빽빽할 밀|秘密|ひみつ|비밀|秘密の きちを つくりました。|비밀 기지를 만들었어요.
+盟|メイ||맹세 맹|同盟|どうめい|동맹|二つの くには 同盟を むすびました。|두 나라는 동맹을 맺었어요.
+模|モ・ボ||본뜰 모|模型|もけい|모형|ふねの 模型を つくりました。|배 모형을 만들었어요.
+訳|ヤク|わけ|번역할 역|通訳|つうやく|통역|せんせいが 通訳して くれました。|선생님이 통역해 줬어요.
+郵|ユウ||우편 우|郵便|ゆうびん|우편|郵便で にもつを おくりました。|우편으로 짐을 보냈어요.
+優|ユウ|やさ(しい)・すぐ(れる)|넉넉할 우|優しい|やさしい|상냥하다|となりの おばさんは 優しいです。|옆집 아주머니는 상냥해요.
+預|ヨ|あず(ける)・あず(かる)|맡길 예|預ける|あずける|맡기다|ぎんこうに お金を 預けました。|은행에 돈을 맡겼어요.
+幼|ヨウ|おさな(い)|어릴 유|幼稚園|ようちえん|유치원|妹は 幼稚園に かよって います。|여동생은 유치원에 다녀요.
+欲|ヨク|ほっ(する)・ほ(しい)|하고자 할 욕|欲しい|ほしい|갖고 싶다|あたらしい じてんしゃが 欲しいです。|새 자전거를 갖고 싶어요.
+翌|ヨク||다음날 익|翌日|よくじつ|다음 날|翌日は はれました。|다음 날은 맑았어요.
+乱|ラン|みだ(れる)・みだ(す)|어지러울 란|乱れる|みだれる|흐트러지다|かぜで かみが 乱れました。|바람에 머리가 흐트러졌어요.
+卵|ラン|たまご|알 란|卵|たまご|달걀, 알|卵を わって やきました。|달걀을 깨서 구웠어요.
+覧|ラン||볼 람|回覧板|かいらんばん|회람판|となりに 回覧板を まわしました。|옆집에 회람판을 돌렸어요.
+裏|リ|うら|속 리|裏|うら|뒤, 뒷면|紙の 裏に なまえを かきました。|종이 뒷면에 이름을 썼어요.
+律|リツ・リチ||법칙 률|法律|ほうりつ|법률|法律を まもりましょう。|법률을 지킵시다.
+臨|リン|のぞ(む)|임할 림|臨時|りんじ|임시|台風で 臨時の やすみに なりました。|태풍으로 임시 휴교가 됐어요.
+朗|ロウ|ほが(らか)|밝을 랑|朗読|ろうどく|낭독|しを 朗読しました。|시를 낭독했어요.
+論|ロン||논할 론|討論|とうろん|토론|クラスで 討論会を ひらきました。|반에서 토론회를 열었어요.`;
+const INFO = {};
+RAW.split("\n").forEach(l => { const p = l.split("|"); INFO[p[0]] = { on: p[1], kun: p[2], ko: p[3], w: p[4], wr: p[5], wk: p[6], s: p[7], sk: p[8] }; });
+const LIST = [], BY_HEX = {}, GRADE_LISTS = {};
+for (const g of ["1","2","3","4","5","6"]) {
+  GRADE_LISTS[g] = [];
+  [...GRADES[g]].forEach((c, i) => {
+    const item = { c, g: +g, i, hex: c.codePointAt(0).toString(16), idx: LIST.length };
+    LIST.push(item); BY_HEX[item.hex] = item; GRADE_LISTS[g].push(item);
+  });
+}
+
+/* ================= helpers ================= */
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const kunHTML = k => esc(k).replace(/\(([^)]*)\)/g, "<i>$1</i>");
+const plainKun = k => k.replace(/[()]/g, "");
+const toHira = s => s.replace(/[\u30a1-\u30f6]/g, c => String.fromCharCode(c.charCodeAt(0) - 0x60));
+const toKata = s => s.replace(/[\u3041-\u3096]/g, c => String.fromCharCode(c.charCodeAt(0) + 0x60));
+const fmtOn = s => settings.onKana === "kata" ? toKata(s) : toHira(s);
+const fmtKun = s => settings.kunKana === "kata" ? toKata(s) : toHira(s);
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+let toastTimer;
+function toast(msg, ms = 2600) {
+  const t = $("toast"); t.textContent = msg; t.classList.add("show");
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("show"), ms);
+}
+function ask(text, yesLabel = "확인") {
+  return new Promise(res => {
+    $("modalText").textContent = text; $("modalYes").textContent = yesLabel; $("modal").hidden = false;
+    const done = v => { $("modal").hidden = true; $("modalYes").onclick = $("modalNo").onclick = null; res(v); };
+    $("modalYes").onclick = () => done(true); $("modalNo").onclick = () => done(false);
+  });
+}
+function lsGet(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } }
+function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } }
+function withTimeout(p, ms) {
+  return new Promise((res, rej) => {
+    const t = setTimeout(() => rej({ code: "timeout" }), ms);
+    p.then(v => { clearTimeout(t); res(v); }, e => { clearTimeout(t); rej(e); });
+  });
+}
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+/* ================= storage ================= */
+const IDB = {
+  db: null,
+  open() {
+    return new Promise((res, rej) => {
+      try {
+        const r = indexedDB.open("kanji-renshu", 1);
+        r.onupgradeneeded = () => r.result.createObjectStore("kv");
+        r.onsuccess = () => { this.db = r.result; res(this.db); };
+        r.onerror = () => rej(r.error);
+      } catch (e) { rej(e); }
+    });
+  },
+  req(mode, fn) {
+    return new Promise((res, rej) => {
+      const tx = this.db.transaction("kv", mode), st = tx.objectStore("kv"), r = fn(st);
+      tx.oncomplete = () => res(r && r.result); tx.onerror = () => rej(tx.error); tx.onabort = () => rej(tx.error || { code: "quota_exceeded" });
+    });
+  },
+  get(k) { return this.req("readonly", st => st.get(k)).then(v => v === undefined ? null : v); },
+  set(k, v) { return this.req("readwrite", st => v === null ? st.delete(k) : st.put(v, k)); },
+  async all() {
+    const keys = await this.req("readonly", st => st.getAllKeys()), vals = await this.req("readonly", st => st.getAll());
+    const out = {}; keys.forEach((k, i) => out[k] = vals[i]); return out;
+  }
+};
+const Store = {
+  mode: "loading", db: null, uid: null, cloudOK: false, deviceOK: false,
+  where() { return lsGet("kj:where", "cloud"); },
+  async init() {
+    try { await IDB.open(); this.deviceOK = true; } catch (e) { this.deviceOK = false; }
+    if (window.__PWA__) {
+      try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
+      this.mode = this.deviceOK ? "device" : (lsSet("kj:probe", 1) ? "local" : "none"); return;
+    }
+    try {
+      for (let i = 0; i < 20 && !(window.claude && window.claude.use); i++) await sleep(100);
+      if (window.claude && window.claude.use) {
+        const [db, user] = await Promise.all([window.claude.use("db"), window.claude.use("user")]);
+        if (db && user) { const id = await user.id(); if (id) { this.db = db; this.uid = String(id); this.cloudOK = true; } }
+      }
+    } catch (e) { /* fall through */ }
+    const pref = this.where();
+    if (pref === "device" && this.deviceOK) this.mode = "device";
+    else if (this.cloudOK) this.mode = "cloud";
+    else if (this.deviceOK) this.mode = "device";
+    else this.mode = lsSet("kj:probe", 1) ? "local" : "none";
+  },
+  ref(key) { return this.db.collection("data/users/" + this.uid).doc(key); },
+  async get(key, mode = this.mode) {
+    if (mode === "cloud") {
+      try {
+        const s = await withTimeout(this.ref(key).get(), 10000);
+        return s.exists ? s.data() : null;
+      } catch (e) {
+        if (e && e.code === "unavailable") { await sleep(400 + Math.random() * 600); const s = await withTimeout(this.ref(key).get(), 10000); return s.exists ? s.data() : null; }
+        throw e;
+      }
+    }
+    if (mode === "device") return IDB.get(key);
+    if (mode === "local") return lsGet("kj:" + key, null);
+    return null;
+  },
+  async set(key, val, mode = this.mode) {
+    if (mode === "cloud") {
+      const r = this.ref(key);
+      const op = () => val === null ? r.delete() : r.set(val);
+      try { await op(); }
+      catch (e) { if (e && e.code === "unavailable") { await sleep(500 + Math.random() * 800); await op(); } else throw e; }
+      return;
+    }
+    if (mode === "device") { try { await IDB.set(key, val); } catch (e) { throw { code: "quota_exceeded" }; } return; }
+    if (mode === "local") {
+      if (val === null) { try { localStorage.removeItem("kj:" + key); } catch (e) {} return; }
+      if (!lsSet("kj:" + key, val)) throw { code: "quota_exceeded" };
+    }
+  },
+  async all(mode = this.mode) {
+    if (mode === "cloud") {
+      const snap = await withTimeout(this.db.collection("data/users/" + this.uid).get(), 20000);
+      const out = {}; snap.docs.forEach(d => { if (d.exists) out[d.id] = d.data(); }); return out;
+    }
+    if (mode === "device") return IDB.all();
+    const out = {};
+    if (mode === "local") for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i); if (k && (k === "kj:meta" || k.startsWith("kj:p_"))) out[k.slice(3)] = lsGet(k, null);
+    }
+    return out;
+  }
+};
+const isDataKey = k => k === "meta" || /^p_[0-9a-f]+_\d+$/.test(k);
+async function waitIdle() { if (saveTimer) flush(); clearTimeout(metaTimer); for (let i = 0; i < 100 && !Writer.idle(); i++) await sleep(100); }
+
+/* one write at a time per document, coalescing bursts */
+const Writer = {
+  pending: new Map(), busy: new Set(),
+  put(key, val) { this.pending.set(key, val); setStatus("saving"); this.pump(key); },
+  async pump(key) {
+    if (this.busy.has(key) || !this.pending.has(key)) return;
+    const val = this.pending.get(key); this.pending.delete(key); this.busy.add(key);
+    let failed = null;
+    try { await Store.set(key, val); } catch (e) { failed = e || {}; }
+    this.busy.delete(key);
+    if (failed) {
+      if (!this.pending.has(key)) this.pending.set(key, val);
+      if (failed.code === "quota_exceeded") toast("저장 공간이 가득 찼어요. 쓰지 않는 페이지를 지워 주세요.", 4500);
+      setStatus("error");
+      setTimeout(() => this.pump(key), 6000);
+      return;
+    }
+    if (this.pending.has(key)) this.pump(key);
+    else if (!this.busy.size && !this.pending.size) setStatus("saved");
+  },
+  idle() { return !this.busy.size && !this.pending.size; }
+};
+
+function setStatus(s) {
+  const el = $("saveStatus");
+  el.classList.toggle("err", s === "error");
+  if (Store.mode === "none") { el.textContent = "저장 안 됨"; el.classList.add("err"); return; }
+  el.textContent = s === "saving" ? "저장 중…" : s === "error" ? "저장 실패 · 다시 시도 중" :
+    s === "saved" ? (Store.mode === "cloud" ? "계정에 저장됨 ✓" : "아이패드에 저장됨 ✓") : "";
+}
+
+/* ================= state ================= */
+let meta = { w: {}, l: {}, x: {} };            // w: hex -> {n, t}; l: hex -> 1
+const settings = Object.assign({
+  tool: "pen", color: "#1d1b18",
+  sizes: { pen: 4, pencil: 4, brush: 8, marker: 6, hl: 7, erase: 8, serase: 8 },
+  pencilOnly: true, paper: "grid", addType: "grid", trace: true, grade: "1", filter: "all", onKana: "hira", kunKana: "hira"
+}, lsGet("kj:settings", {}));
+function saveSettings() { lsSet("kj:settings", settings); }
+
+const TOOLS = {
+  pen:    { name: "볼펜",   alpha: 1,    width: (w, p) => w * (0.45 + 0.8 * p) },
+  pencil: { name: "연필",   alpha: 0.92, width: (w, p) => w * (0.5 + 0.6 * p), texture: true },
+  brush:  { name: "붓펜",   alpha: 1,    width: (w, p) => w * (0.12 + 1.9 * Math.pow(p, 1.15)) },
+  marker: { name: "마커",   alpha: 1,    width: (w) => w * 1.8, flat: true },
+  hl:     { name: "형광펜", alpha: 0.33, width: (w) => w * 4.5, flat: true },
+  erase:  { name: "지우개", alpha: 1, width: (w) => w * 3, flat: true, eraser: true },
+  serase: { name: "획지우개", alpha: 1, width: (w) => w * 2.5, strokeEraser: true }
+};
+const TOOL_ICONS = {
+  pen: '<path d="M4 20l1-4L16 5l3 3L8 19z"/><path d="M14 7l3 3"/>',
+  pencil: '<path d="M4 20l1.5-4.5L16 5l3 3L8.5 18.5z"/><path d="M5.5 15.5l3 3"/>',
+  brush: '<path d="M18 3c-4 3-8 8-9 11l1 1c3-1 8-5 11-9z"/><path d="M9 14c-3 0-4 2-4 4 0 1-1 2-2 2 3 1 7 0 7-4"/>',
+  marker: '<path d="M9 15l-3 5h5l2-3"/><path d="M9 15l7-11 4 3-7 10z"/>',
+  hl: '<path d="M8 14l-2 6h6l1-3"/><path d="M8 14l6-10 5 3-6 10z"/><path d="M3 21h18" opacity=".5"/>',
+  erase: '<path d="M16 3l5 5-11 11H5l-2-2z"/><path d="M9 10l5 5"/><path d="M10 19h11"/>',
+  serase: '<path d="M4 18c3-8 6-12 9-12s1 6 4 6 3-3 3-3"/><path d="M3 4l18 16" stroke-width="2.4"/>'
+};
+const COLORS = ["#1d1b18", "#2c4fa3", "#d0392f", "#1f8a5b", "#e07a1f", "#7a4cc2", "#8a8f98", "#f2c230"];
+
+const P = {             // practice state
+  item: null, pages: [], types: [], idx: 0, strokes: [], undo: [], redo: [], test: false,
+  scale: 1, dpr: 1, size: 0, loadToken: 0
+};
+
+/* ================= stroke encoding ================= */
+function encodePts(pts) {
+  const out = []; let px = 0, py = 0, pp = 0;
+  for (let i = 0; i < pts.length; i += 3) {
+    const x = Math.round(pts[i] * 10), y = Math.round(pts[i + 1] * 10), p = Math.round(pts[i + 2] * 100);
+    out.push(x - px, y - py, p - pp); px = x; py = y; pp = p;
+  }
+  return out.join(",");
+}
+function decodePts(s) {
+  if (!s) return [];
+  const a = s.split(",").map(Number), out = new Array(a.length); let x = 0, y = 0, p = 0;
+  for (let i = 0; i + 2 < a.length; i += 3) { x += a[i]; y += a[i + 1]; p += a[i + 2]; out[i] = x / 10; out[i + 1] = y / 10; out[i + 2] = p / 100; }
+  return out;
+}
+function serPage(pg) { return { paper: pg.paper, s: pg.strokes.map(st => ({ k: st.k, c: st.c, w: st.w, d: encodePts(st.pts) })), t: Date.now() }; }
+const DEFAULT_PAPERS = ["read", "grid", "lines"];
+const PAPER_NAMES = { read: "음훈 노트", grid: "연습 칸", lines: "줄 노트", big: "큰 칸" };
+function deserPage(d, i) {
+  return { paper: d && d.paper || DEFAULT_PAPERS[i] || "lines", strokes: (d && Array.isArray(d.s) ? d.s : []).filter(Boolean).map(s => ({ k: TOOLS[s.k] ? s.k : "pen", c: s.c || "#1d1b18", w: +s.w || 4, pts: decodePts(s.d) })) };
+}
+const pageKey = (hex, i) => "p_" + hex + "_" + i;
+
+/* ================= home ================= */
+function gradeCounts(g) {
+  let w = 0, l = 0;
+  for (const it of GRADE_LISTS[g]) { if (meta.w[it.hex]) w++; if (meta.l[it.hex]) l++; }
+  return { w, l, n: GRADE_LISTS[g].length };
+}
+function renderTabs() {
+  $("tabs").innerHTML = ["1","2","3","4","5","6"].map(g => {
+    const c = gradeCounts(g);
+    return `<button class="tab${settings.grade === g ? " on" : ""}" data-g="${g}"><b>${g}</b>학년<span class="pr">외운 글자 ${c.l} / ${c.n}</span></button>`;
+  }).join("");
+}
+function renderGrid() {
+  const g = settings.grade, f = settings.filter, c = gradeCounts(g);
+  $("gradeStat").innerHTML = `${g}학년 · 쓴 글자 <strong>${c.w}</strong> · 외운 글자 <strong>${c.l}</strong> / ${c.n}`;
+  document.querySelectorAll("#filters button").forEach(b => b.classList.toggle("on", b.dataset.f === f));
+  const items = GRADE_LISTS[g].filter(it =>
+    f === "all" ? true : f === "todo" ? !meta.l[it.hex] : f === "written" ? !!meta.w[it.hex] : f === "wrong" ? !!meta.x[it.hex] : !!meta.l[it.hex]);
+  $("grid").innerHTML = items.length ? items.map(it =>
+    `<button class="tile${meta.w[it.hex] ? " w" : ""}${meta.l[it.hex] ? " l" : ""}${meta.x[it.hex] ? " x" : ""}" data-hex="${it.hex}"><span class="no">${it.i + 1}</span>${it.c}<span class="ko">${esc((INFO[it.c] || {}).ko || "")}</span></button>`
+  ).join("") : `<div class="empty">${f === "wrong" ? "테스트에서 틀린 글자가 없어요." : f === "learned" ? "아직 외운 글자가 없어요." : f === "written" ? "아직 쓴 글자가 없어요." : "이 학년 한자를 모두 외웠어요!"}</div>`;
+}
+function renderHome() { renderTabs(); renderGrid(); }
+function renderBadge() {
+  const b = $("storeBadge");
+  b.className = "badge" + (Store.mode === "cloud" ? " cloud" : Store.mode === "device" ? " dev" : Store.mode === "loading" ? "" : " warn");
+  b.textContent = (Store.mode === "cloud" ? "☁︎ 계정에 저장 중" : Store.mode === "device" ? "📱 이 아이패드에 저장 중" : Store.mode === "local" ? "이 브라우저에만 저장" : Store.mode === "none" ? "저장할 수 없는 환경이에요" : "불러오는 중…") + " · 저장·백업 ⚙︎";
+}
+
+$("tabs").addEventListener("click", e => { const b = e.target.closest(".tab"); if (!b) return; location.hash = "g" + b.dataset.g; });
+$("filters").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; settings.filter = b.dataset.f; saveSettings(); renderGrid(); });
+$("grid").addEventListener("click", e => { const t = e.target.closest(".tile"); if (t) location.hash = "k-" + t.dataset.hex; });
+$("randomBtn").addEventListener("click", () => {
+  const all = GRADE_LISTS[settings.grade], todo = all.filter(it => !meta.l[it.hex]);
+  const pool = todo.length ? todo : all; location.hash = "k-" + pool[Math.floor(Math.random() * pool.length)].hex;
+});
+
+/* ================= meta ================= */
+let metaTimer = null;
+function saveMeta() { clearTimeout(metaTimer); metaTimer = setTimeout(() => Writer.put("meta", { v: 1, w: meta.w, l: meta.l, x: meta.x }), 300); }
+
+/* ================= toolbar ================= */
+function buildToolbar() {
+  $("toolGroup").innerHTML = Object.keys(TOOLS).map(k =>
+    `<button class="tool" data-t="${k}" aria-label="${TOOLS[k].name}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${TOOL_ICONS[k]}</svg>${TOOLS[k].name}<span class="tip"></span></button>`).join("");
+  $("colorGroup").innerHTML = COLORS.map(c => `<button class="sw" data-c="${c}" style="background:${c}" aria-label="색 ${c}"></button>`).join("");
+  $("toolGroup").addEventListener("click", e => { const b = e.target.closest(".tool"); if (!b) return; settings.tool = b.dataset.t; saveSettings(); syncToolbar(); });
+  $("colorGroup").addEventListener("click", e => {
+    const b = e.target.closest(".sw"); if (!b) return; settings.color = b.dataset.c;
+    if (TOOLS[settings.tool].eraser || TOOLS[settings.tool].strokeEraser) settings.tool = "pen";
+    saveSettings(); syncToolbar();
+  });
+  $("sizeRange").addEventListener("input", e => { settings.sizes[settings.tool] = +e.target.value; saveSettings(); syncSizeDot(); });
+  $("pencilOnlyBtn").addEventListener("click", () => { settings.pencilOnly = !settings.pencilOnly; saveSettings(); syncToolbar(); toast(settings.pencilOnly ? "펜슬로만 써져요. 손바닥이 닿아도 괜찮아요." : "손가락으로도 써져요."); });
+  $("undoBtn").addEventListener("click", undo);
+  $("redoBtn").addEventListener("click", redo);
+  $("clearBtn").addEventListener("click", async () => {
+    if (!P.strokes.length) return;
+    if (await ask("이 페이지에 쓴 것을 모두 지울까요? (실행 취소로 되돌릴 수 있어요)", "지우기")) {
+      pushUndo(); P.strokes = []; renderAll(); changed();
+    }
+  });
+}
+function syncSizeDot() {
+  const t = TOOLS[settings.tool], w = settings.sizes[settings.tool] || 4;
+  const d = clamp(t.width(w, 0.6) * 0.9, 3, 26);
+  const i = $("sizeDot"); i.style.width = i.style.height = d + "px";
+  i.style.background = t.eraser || t.strokeEraser ? "#bbb" : settings.color; i.style.opacity = t.alpha < 0.5 ? 0.5 : 1;
+}
+function syncToolbar() {
+  document.querySelectorAll("#toolGroup .tool").forEach(b => { b.classList.toggle("on", b.dataset.t === settings.tool); b.style.setProperty("--cur", settings.color); });
+  document.querySelectorAll("#colorGroup .sw").forEach(b => b.classList.toggle("on", b.dataset.c === settings.color));
+  $("sizeRange").value = settings.sizes[settings.tool] || 4;
+  $("pencilOnlySw").classList.toggle("on", settings.pencilOnly);
+  $("traceSw").classList.toggle("on", settings.trace);
+  $("testSw").classList.toggle("on", P.test);
+  $("undoBtn").disabled = !P.undo.length; $("redoBtn").disabled = !P.redo.length;
+  syncSizeDot();
+}
+
+/* ================= paper (svg background) ================= */
+function paperSVG() {
+  const pg = P.pages[P.idx], type = pg ? pg.paper : "read", ch = P.item ? P.item.c : "";
+  const hide = P.test, trace = settings.trace && !hide;
+  const G = "#e4a79e", GS = "#f1cdc7";
+  let s = "";
+  const boxGrid = (pad, cell, n, fs, texts) => {
+    const end = pad + cell * n;
+    for (let i = 0; i <= n; i++) {
+      const v = pad + i * cell;
+      s += `<line x1="${pad}" y1="${v}" x2="${end}" y2="${v}" stroke="${G}" stroke-width="${i % n === 0 ? 3 : 2}"/>`;
+      s += `<line x1="${v}" y1="${pad}" x2="${v}" y2="${end}" stroke="${G}" stroke-width="${i % n === 0 ? 3 : 2}"/>`;
+    }
+    for (let i = 0; i < n; i++) {
+      const m = pad + i * cell + cell / 2;
+      s += `<line x1="${pad}" y1="${m}" x2="${end}" y2="${m}" stroke="${GS}" stroke-width="1.6" stroke-dasharray="8 7"/>`;
+      s += `<line x1="${m}" y1="${pad}" x2="${m}" y2="${end}" stroke="${GS}" stroke-width="1.6" stroke-dasharray="8 7"/>`;
+    }
+    texts.forEach(([col, row, op]) => {
+      const cx = pad + col * cell + cell / 2, cy = pad + row * cell + cell / 2;
+      s += `<text x="${cx}" y="${cy}" font-size="${fs}" text-anchor="middle" dominant-baseline="central" font-family="Klee One, serif" font-weight="600" fill="#25211c" fill-opacity="${op}">${ch}</text>`;
+    });
+  };
+  if (type === "grid") {
+    const t = [];
+    if (!hide) t.push([0, 0, 0.62]);
+    if (trace) for (let c = 1; c < 5; c++) t.push([c, 0, 0.13]);
+    boxGrid(25, 190, 5, 150, t);
+  } else if (type === "big") {
+    const t = [];
+    if (!hide) t.push([0, 0, trace ? 0.14 : 0.0]);
+    if (trace) t.push([1, 0, 0.07]);
+    boxGrid(25, 475, 2, 380, t.filter(x => x[2] > 0));
+  } else if (type === "read") {
+    const d = INFO[ch] || {};
+    const lab = (x, y, txt) => { s += `<text x="${x}" y="${y}" font-size="22" fill="#a2988a" font-family="Noto Sans KR, sans-serif" font-weight="500">${txt}</text>`; };
+    const cells = (x0, y0, n, size, text, op) => {
+      for (let i = 0; i < n; i++) {
+        const x = x0 + i * size;
+        s += `<rect x="${x}" y="${y0}" width="${size}" height="${size}" fill="none" stroke="${G}" stroke-width="2"/>`;
+        s += `<line x1="${x + size / 2}" y1="${y0}" x2="${x + size / 2}" y2="${y0 + size}" stroke="${GS}" stroke-width="1.4" stroke-dasharray="6 6"/>`;
+        s += `<line x1="${x}" y1="${y0 + size / 2}" x2="${x + size}" y2="${y0 + size / 2}" stroke="${GS}" stroke-width="1.4" stroke-dasharray="6 6"/>`;
+      }
+      if (text && op > 0) [...text].slice(0, n).forEach((c, i) => {
+        s += `<text x="${x0 + i * size + size / 2}" y="${y0 + size / 2}" font-size="${size * 0.72}" text-anchor="middle" dominant-baseline="central" font-family="Klee One, serif" font-weight="600" fill="#25211c" fill-opacity="${op}">${c}</text>`;
+      });
+    };
+    // kanji box
+    s += `<rect x="25" y="45" width="290" height="290" fill="none" stroke="${G}" stroke-width="3"/>`;
+    s += `<line x1="170" y1="45" x2="170" y2="335" stroke="${GS}" stroke-width="1.6" stroke-dasharray="8 7"/><line x1="25" y1="190" x2="315" y2="190" stroke="${GS}" stroke-width="1.6" stroke-dasharray="8 7"/>`;
+    if (trace) s += `<text x="170" y="190" font-size="230" text-anchor="middle" dominant-baseline="central" font-family="Klee One, serif" font-weight="600" fill="#25211c" fill-opacity="0.12">${ch}</text>`;
+    lab(25, 32, "漢字 한자");
+    const on1 = fmtOn((d.on || "").split("・")[0]), kun1 = fmtKun(plainKun((d.kun || "").split("・")[0]));
+    lab(345, 32, "音読み 음독" + (d.on ? "" : " — 없음"));
+    cells(345, 45, 6, 100, on1, trace ? 0.13 : 0);
+    lab(345, 182, "訓読み 훈독" + (d.kun ? "" : " — 없음"));
+    cells(345, 195, 6, 100, kun1, trace ? 0.13 : 0);
+    lab(25, 372, "ことば 단어 · 읽는 법" + (d.wk ? " — " + (hide ? "" : (d.w || "") + " ") + "(" + esc(d.wk) + ")" : ""));
+    cells(25, 385, 9, 100, d.wr || "", trace ? 0.13 : 0);
+    lab(25, 520, "例文 예문 · 자유롭게 쓰기");
+    if (d.sk) s += `<text x="975" y="520" text-anchor="end" font-size="${Math.min(24, Math.floor(620 / Math.max(1, [...d.sk].length) * 1.6))}" fill="#6f665a" font-family="Noto Sans KR, sans-serif" font-weight="500">${esc(d.sk)}</text>`;
+    for (let y = 600; y <= 960; y += 90) {
+      s += `<line x1="25" y1="${y}" x2="975" y2="${y}" stroke="#d9cfc0" stroke-width="2"/>`;
+      s += `<line x1="25" y1="${y - 45}" x2="975" y2="${y - 45}" stroke="#ece4d7" stroke-width="1.4" stroke-dasharray="6 7"/>`;
+    }
+    if (trace && d.s) {
+      const fs = Math.min(62, Math.floor(940 / [...d.s].length));
+      s += `<text x="30" y="588" font-size="${fs}" font-family="Klee One, serif" font-weight="600" fill="#25211c" fill-opacity="0.13" xml:space="preserve">${esc(d.s)}</text>`;
+    }
+  } else {
+    for (let y = 90; y < 1000; y += 62) s += `<line x1="0" y1="${y}" x2="1000" y2="${y}" stroke="#d9dfe9" stroke-width="2"/>`;
+    s += `<line x1="90" y1="0" x2="90" y2="1000" stroke="#efb9b2" stroke-width="2"/>`;
+  }
+  $("paperSvg").innerHTML = s;
+}
+
+/* ================= canvas rendering ================= */
+const mainCv = $("mainCv"), liveCv = $("liveCv"), mctx = mainCv.getContext("2d"), lctx = liveCv.getContext("2d");
+const tmpCv = document.createElement("canvas"), tctx = tmpCv.getContext("2d");
+const patternCache = new WeakMap();
+function pencilPattern(ctx, color) {
+  let m = patternCache.get(ctx); if (!m) { m = new Map(); patternCache.set(ctx, m); }
+  if (m.has(color)) return m.get(color);
+  const c = document.createElement("canvas"); c.width = c.height = 64; const x = c.getContext("2d");
+  const r = parseInt(color.slice(1, 3), 16), g = parseInt(color.slice(3, 5), 16), b = parseInt(color.slice(5, 7), 16);
+  const img = x.createImageData(64, 64);
+  for (let i = 0; i < img.data.length; i += 4) {
+    const a = Math.random(); img.data[i] = r; img.data[i + 1] = g; img.data[i + 2] = b;
+    img.data[i + 3] = a < 0.18 ? 40 : a < 0.45 ? 150 : 235;
+  }
+  x.putImageData(img, 0, 0);
+  const pat = ctx.createPattern(c, "repeat"); m.set(color, pat); return pat;
+}
+function setT(ctx) { ctx.setTransform(P.scale, 0, 0, P.scale, 0, 0); }
+function drawPath(ctx, st) {
+  const t = TOOLS[st.k], pts = st.pts, n = pts.length / 3;
+  if (!n) return;
+  ctx.lineCap = "round"; ctx.lineJoin = "round";
+  const style = t.texture ? pencilPattern(ctx, st.c) : st.c;
+  ctx.strokeStyle = style; ctx.fillStyle = style;
+  if (n === 1) {
+    ctx.beginPath(); ctx.arc(pts[0], pts[1], t.width(st.w, pts[2]) / 2, 0, Math.PI * 2); ctx.fill(); return;
+  }
+  if (t.flat) {
+    ctx.lineWidth = t.width(st.w, 0.5);
+    ctx.beginPath(); ctx.moveTo(pts[0], pts[1]);
+    for (let k = 1; k < n; k++) {
+      const ex = k < n - 1 ? (pts[k * 3] + pts[k * 3 + 3]) / 2 : pts[k * 3];
+      const ey = k < n - 1 ? (pts[k * 3 + 1] + pts[k * 3 + 4]) / 2 : pts[k * 3 + 1];
+      ctx.quadraticCurveTo(pts[k * 3], pts[k * 3 + 1], ex, ey);
+    }
+    ctx.stroke(); return;
+  }
+  let sx = pts[0], sy = pts[1];
+  for (let k = 1; k < n; k++) {
+    const cx = pts[k * 3], cy = pts[k * 3 + 1];
+    const ex = k < n - 1 ? (cx + pts[k * 3 + 3]) / 2 : cx, ey = k < n - 1 ? (cy + pts[k * 3 + 4]) / 2 : cy;
+    ctx.lineWidth = t.width(st.w, (pts[k * 3 - 1] + pts[k * 3 + 2]) / 2);
+    ctx.beginPath(); ctx.moveTo(sx, sy); ctx.quadraticCurveTo(cx, cy, ex, ey); ctx.stroke();
+    sx = ex; sy = ey;
+  }
+}
+function drawStroke(ctx, st) {
+  const t = TOOLS[st.k];
+  if (t.strokeEraser) return;
+  if (t.eraser) { ctx.save(); ctx.globalCompositeOperation = "destination-out"; drawPath(ctx, Object.assign({}, st, { c: "#000" })); ctx.restore(); return; }
+  if (t.alpha < 1) {
+    tctx.setTransform(1, 0, 0, 1, 0, 0); tctx.clearRect(0, 0, tmpCv.width, tmpCv.height); setT(tctx);
+    drawPath(tctx, st);
+    ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = t.alpha; ctx.drawImage(tmpCv, 0, 0); ctx.restore();
+    return;
+  }
+  drawPath(ctx, st);
+}
+function renderAll() {
+  mctx.setTransform(1, 0, 0, 1, 0, 0); mctx.clearRect(0, 0, mainCv.width, mainCv.height); setT(mctx);
+  for (const st of P.strokes) drawStroke(mctx, st);
+}
+let liveQueued = false;
+function renderLive() {
+  liveQueued = false;
+  lctx.setTransform(1, 0, 0, 1, 0, 0); lctx.clearRect(0, 0, liveCv.width, liveCv.height);
+  if (!cur || TOOLS[cur.k].eraser || TOOLS[cur.k].strokeEraser) return;
+  setT(lctx); drawPath(lctx, cur);
+}
+function queueLive() { if (!liveQueued) { liveQueued = true; requestAnimationFrame(renderLive); } }
+
+function layout() {
+  const st = $("stage"), cs = getComputedStyle(st);
+  const w = st.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+  const h = st.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+  const size = Math.max(200, Math.floor(Math.min(w, h)));
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const paper = $("paper"); paper.style.width = paper.style.height = size + "px";
+  const px = Math.round(size * dpr);
+  if (px !== P.size || dpr !== P.dpr) {
+    P.size = px; P.dpr = dpr; P.scale = px / 1000;
+    for (const c of [mainCv, liveCv, tmpCv]) { c.width = px; c.height = px; }
+    renderAll(); renderLive();
+  }
+}
+new ResizeObserver(() => { if (!$("practice").hidden) layout(); }).observe($("stage"));
+
+/* ================= input ================= */
+let cur = null, drawing = null, rect = null, lastTouchHint = 0;
+function toLogical(ev) {
+  return [clamp((ev.clientX - rect.left) / rect.width * 1000, -20, 1020), clamp((ev.clientY - rect.top) / rect.height * 1000, -20, 1020)];
+}
+function pressureOf(ev) {
+  if (ev.pointerType === "pen") { const p = ev.pressure || 0; return clamp(p > 0 ? Math.pow(p, 0.8) : 0.5, 0.05, 1); }
+  return 0.5;
+}
+function distSeg(px, py, ax, ay, bx, by) {
+  const dx = bx - ax, dy = by - ay, l = dx * dx + dy * dy;
+  let t = l ? ((px - ax) * dx + (py - ay) * dy) / l : 0; t = clamp(t, 0, 1);
+  const qx = ax + t * dx - px, qy = ay + t * dy - py; return Math.sqrt(qx * qx + qy * qy);
+}
+function hitStroke(st, x, y, r) {
+  const pts = st.pts, n = pts.length / 3, rr = r + TOOLS[st.k].width(st.w, 0.6) / 2;
+  if (n === 1) return Math.hypot(pts[0] - x, pts[1] - y) <= rr;
+  for (let k = 1; k < n; k++) if (distSeg(x, y, pts[k * 3 - 3], pts[k * 3 - 2], pts[k * 3], pts[k * 3 + 1]) <= rr) return true;
+  return false;
+}
+function addPoint(ev) {
+  const [x, y] = toLogical(ev); let p = pressureOf(ev);
+  const pts = cur.pts, n = pts.length;
+  if (n) {
+    const lx = pts[n - 3], ly = pts[n - 2];
+    if (Math.hypot(x - lx, y - ly) < 0.7) return;
+    p = pts[n - 1] * 0.55 + p * 0.45;
+  }
+  pts.push(x, y, p);
+  const t = TOOLS[cur.k];
+  if (t.strokeEraser) {
+    const r = t.width(cur.w, 0.5) / 2, before = P.strokes.length;
+    const ax = n ? pts[n - 3] : x, ay = n ? pts[n - 2] : y;
+    P.strokes = P.strokes.filter(st => !(hitStroke(st, x, y, r) || hitStroke(st, (x + ax) / 2, (y + ay) / 2, r)));
+    if (P.strokes.length !== before) { drawing.removed = true; renderAll(); }
+  } else if (t.eraser) {
+    mctx.save(); mctx.globalCompositeOperation = "destination-out"; mctx.lineCap = "round"; mctx.lineWidth = t.width(cur.w);
+    mctx.strokeStyle = "#000"; mctx.beginPath();
+    if (n) { mctx.moveTo(pts[n - 3], pts[n - 2]); mctx.lineTo(x, y); mctx.stroke(); }
+    else { mctx.fillStyle = "#000"; mctx.arc(x, y, t.width(cur.w) / 2, 0, Math.PI * 2); mctx.fill(); }
+    mctx.restore();
+  }
+}
+liveCv.addEventListener("pointerdown", ev => {
+  if (drawing || !P.ready) return;
+  if (ev.pointerType === "touch" && settings.pencilOnly) return; // finger = swipe pages
+  ev.preventDefault();
+  try { liveCv.setPointerCapture(ev.pointerId); } catch (e) {}
+  rect = liveCv.getBoundingClientRect();
+  const k = settings.tool, t = TOOLS[k];
+  drawing = { id: ev.pointerId, snapshot: P.strokes.slice(), removed: false };
+  cur = { k, c: settings.color, w: settings.sizes[k] || 4, pts: [] };
+  liveCv.style.opacity = t.alpha;
+  addPoint(ev); queueLive();
+});
+liveCv.addEventListener("pointermove", ev => {
+  if (!drawing || ev.pointerId !== drawing.id) return;
+  ev.preventDefault();
+  const list = ev.getCoalescedEvents ? ev.getCoalescedEvents() : null;
+  if (list && list.length) for (const e of list) addPoint(e); else addPoint(ev);
+  queueLive();
+});
+function endStroke(ev) {
+  if (!drawing || ev.pointerId !== drawing.id) return;
+  const t = TOOLS[cur.k];
+  if (t.strokeEraser) {
+    if (drawing.removed) { P.undo.push(drawing.snapshot); P.redo = []; changed(); }
+  } else if (cur.pts.length) {
+    P.undo.push(drawing.snapshot); P.redo = [];
+    if (P.undo.length > 150) P.undo.shift();
+    P.strokes = P.strokes.concat([cur]);
+    if (t.eraser) renderAll(); else drawStroke(mctx, cur);
+    changed();
+  }
+  cur = null; drawing = null; renderLive(); syncToolbar();
+}
+liveCv.addEventListener("pointerup", endStroke);
+liveCv.addEventListener("pointercancel", endStroke);
+// stop iOS magnifier / text selection / scroll while writing
+for (const evn of ["touchstart", "touchmove"]) liveCv.addEventListener(evn, e => { if (e.touches.length === 1 && (e.touches[0].touchType === "stylus" || !settings.pencilOnly)) e.preventDefault(); }, { passive: false });
+document.addEventListener("gesturestart", e => e.preventDefault());
+
+function pushUndo() { P.undo.push(P.strokes.slice()); if (P.undo.length > 150) P.undo.shift(); P.redo = []; }
+function undo() { if (!P.undo.length) return; P.redo.push(P.strokes); P.strokes = P.undo.pop(); renderAll(); changed(); syncToolbar(); }
+function redo() { if (!P.redo.length) return; P.undo.push(P.strokes); P.strokes = P.redo.pop(); renderAll(); changed(); syncToolbar(); }
+document.addEventListener("keydown", e => {
+  if ($("practice").hidden) return;
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "z") { e.preventDefault(); e.shiftKey ? redo() : undo(); }
+});
+
+/* ================= saving pages ================= */
+let saveTimer = null;
+function changed() {
+  const pg = P.pages[P.idx]; if (!pg) return;
+  pg.strokes = P.strokes;
+  setStatus("saving");
+  clearTimeout(saveTimer); saveTimer = setTimeout(flush, 700);
+}
+function flush() {
+  clearTimeout(saveTimer); saveTimer = null;
+  const it = P.item, pg = P.pages[P.idx]; if (!it || !pg || !pg.dirtyCheck) return;
+  const data = serPage(pg);
+  if (JSON.stringify(data).length > 240000) toast("이 페이지가 거의 가득 찼어요. ‘+ 연습 칸’이나 ‘+ 줄 노트’로 이어서 써 주세요.", 4500);
+  Writer.put(pageKey(it.hex, P.idx), data); pg.persisted = true;
+  P.pages.forEach((p, i) => { if (p && !p.persisted) { Writer.put(pageKey(it.hex, i), serPage(p)); p.persisted = true; } });
+  syncPages();
+  updateMetaFor(it.hex);
+}
+function updateMetaFor(hex) {
+  const any = P.pages.some(pg => !pg || pg.strokes.length) || P.pages.length !== DEFAULT_PAPERS.length;
+  const prev = meta.w[hex];
+  P.types = P.pages.map((pg, i) => pg ? pg.paper : (P.types[i] || DEFAULT_PAPERS[i] || "lines"));
+  if (any) meta.w[hex] = { n: P.pages.length, t: Date.now(), p: P.types };
+  else if (prev) delete meta.w[hex];
+  if (any || prev) saveMeta();
+}
+document.addEventListener("visibilitychange", () => { if (document.hidden && saveTimer) flush(); });
+window.addEventListener("pagehide", () => { if (saveTimer) flush(); });
+
+/* ================= practice view ================= */
+async function loadPage(hex, i, token) {
+  const d = await Store.get(pageKey(hex, i));
+  if (token !== P.loadToken) return null;
+  const pg = deserPage(d, i); if (!d && P.types[i]) pg.paper = P.types[i]; pg.dirtyCheck = true; pg.persisted = !!d; return pg;
+}
+async function openKanji(hex) {
+  const it = BY_HEX[hex]; if (!it) { location.hash = "g" + settings.grade; return; }
+  if (saveTimer) flush();
+  P.item = it; P.idx = 0; P.undo = []; P.redo = []; P.strokes = []; P.ready = false; revealed.clear();
+  const token = ++P.loadToken;
+  settings.grade = String(it.g); saveSettings();
+  $("home").hidden = true; $("practice").hidden = false;
+  $("pK").textContent = it.c;
+  $("pMeta").textContent = `${it.g}학년 · ${it.i + 1} / ${GRADE_LISTS[it.g].length}`;
+  $("modelK").textContent = it.c;
+  $("prevBtn").disabled = it.idx === 0; $("nextBtn").disabled = it.idx === LIST.length - 1;
+  syncLearn();
+  const fresh = () => DEFAULT_PAPERS.map(p => ({ paper: p, strokes: [], dirtyCheck: true, persisted: false }));
+  P.pages = fresh();
+  paperSVG(); layout(); renderAll(); syncToolbar(); syncPages(); setStatus("");
+  $("paperLoading").hidden = false;
+  await ready;
+  if (token !== P.loadToken) return;
+  syncLearn();
+  const n = (meta.w[hex] && meta.w[hex].n) || 0;
+  P.types = (meta.w[hex] && Array.isArray(meta.w[hex].p)) ? meta.w[hex].p.slice() : [];
+  if (!n) { P.pages = fresh(); $("paperLoading").hidden = true; showPage(0); return; }
+  try {
+    const first = await loadPage(hex, 0, token);
+    if (!first) return;
+    P.pages = [first];
+    for (let i = 1; i < n; i++) P.pages.push(null);
+  } catch (e) {
+    if (token !== P.loadToken) return;
+    toast("필기를 불러오지 못했어요. 잠시 후 다시 열어 주세요.", 4000);
+    $("paperLoading").textContent = "불러오지 못했어요"; return;
+  }
+  $("paperLoading").hidden = true; $("paperLoading").textContent = "불러오는 중…";
+  showPage(0);
+}
+async function showPage(i, dir) {
+  if (saveTimer) flush();
+  const token = P.loadToken;
+  if (!P.pages[i]) {
+    $("paperLoading").hidden = false; P.ready = false;
+    await shifting;
+    try { const pg = await loadPage(P.item.hex, i, token); if (!pg) return; P.pages[i] = pg; }
+    catch (e) { toast("페이지를 불러오지 못했어요.", 3000); $("paperLoading").hidden = true; return; }
+    $("paperLoading").hidden = true;
+  }
+  P.idx = i; P.strokes = P.pages[i].strokes; P.undo = []; P.redo = []; P.ready = true;
+  paperSVG(); renderAll(); syncToolbar(); syncPages();
+  if (dir && $("paper").animate) $("paper").animate([{ transform: `translateX(${dir * 70}px)`, opacity: 0.2 }, { transform: "none", opacity: 1 }], { duration: 220, easing: "ease-out" });
+}
+function goPage(d) {
+  if (!P.ready) return; const j = P.idx + d;
+  if (j === P.pages.length && d > 0) { addPage(settings.addType); return; }
+  if (j >= 0 && j < P.pages.length) showPage(j, d);
+}
+function addPage(type) {
+  if (!P.ready || !P.item) return; if (saveTimer) flush();
+  P.pages.push({ paper: type, strokes: [], dirtyCheck: true, persisted: false });
+  const i = P.pages.length - 1, hex = P.item.hex;
+  P.pages.forEach((p, j) => { if (p && !p.persisted) { Writer.put(pageKey(hex, j), serPage(p)); p.persisted = true; } });
+  updateMetaFor(hex);
+  showPage(i, 1); toast(`${i + 1}번째 페이지로 ${PAPER_NAMES[type]}를 추가했어요`);
+}
+function syncPages() {
+  const nameOf = (pg, i) => PAPER_NAMES[pg ? pg.paper : (P.types[i] || DEFAULT_PAPERS[i] || "")] || "페이지";
+  $("plist").innerHTML = P.pages.map((pg, i) =>
+    `<button class="pitem${i === P.idx ? " on" : ""}" data-pi="${i}"><span class="n">${i + 1}</span>${nameOf(pg, i)}${!pg || pg.strokes.length ? '<span class="dot"></span>' : ""}</button>`).join("")
+    + `<button class="pitem add" data-addnow="1"><span class="n">+</span>${PAPER_NAMES[settings.addType]} 추가</button>`;
+  document.querySelectorAll("#addSeg button").forEach(b => b.classList.toggle("on", b.dataset.addtype === settings.addType));
+  const last = P.idx >= P.pages.length - 1;
+  $("pgPrev").disabled = P.idx === 0; $("pgNext").disabled = false;
+  $("pgNext").textContent = last ? "+" : "›"; $("pgNext").title = last ? PAPER_NAMES[settings.addType] + " 추가" : "다음 페이지";
+  $("pgDel").disabled = P.pages.length <= 1;
+}
+$("addSeg").addEventListener("click", e => {
+  const b = e.target.closest("[data-addtype]"); if (!b) return;
+  settings.addType = b.dataset.addtype; saveSettings(); syncPages();
+  toast(`이제 마지막 페이지에서 밀면 ‘${PAPER_NAMES[settings.addType]}’가 추가돼요`);
+});
+$("plist").addEventListener("click", e => { if (e.target.closest("[data-addnow]")) { addPage(settings.addType); return; } const b = e.target.closest("[data-pi]"); if (!b || !P.ready) return; const i = +b.dataset.pi; if (i !== P.idx) showPage(i, i > P.idx ? 1 : -1); });
+/* finger swipe between pages (the pencil keeps writing) */
+let swipe = null;
+$("stage").addEventListener("pointerdown", e => {
+  if (e.pointerType !== "touch" || !settings.pencilOnly || e.target.closest("button")) return;
+  swipe = { id: e.pointerId, x: e.clientX, y: e.clientY };
+});
+$("stage").addEventListener("pointermove", e => {
+  if (!swipe || e.pointerId !== swipe.id) return;
+  const dx = e.clientX - swipe.x; $("paper").style.transform = `translateX(${dx * 0.35}px)`;
+});
+function endSwipe(e) {
+  if (!swipe || e.pointerId !== swipe.id) return;
+  const dx = e.clientX - swipe.x, dy = e.clientY - swipe.y; swipe = null; $("paper").style.transform = "";
+  if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.2) goPage(dx < 0 ? 1 : -1);
+}
+$("stage").addEventListener("pointerup", endSwipe);
+$("stage").addEventListener("pointercancel", endSwipe);
+const revealed = new Set();
+function renderInfo() {
+  const it = P.item; if (!it) return;
+  const d = INFO[it.c] || {};
+  $("koText").textContent = d.ko || "";
+  const hide = P.test;
+  const sec = (key, title, body, cue) => {
+    const h = hide && !revealed.has(key);
+    return `<div class="sec${h ? " hidden" : ""}" data-sec="${key}"><div class="h">${title}</div><div class="vwrap"><div class="body">${body}</div>${h ? `<button class="veil" data-reveal="${key}">눌러서 정답 보기</button>` : ""}</div>${cue || ""}</div>`;
+  };
+  const chips = (s, cls, fmt) => s ? `<div class="rd ${cls}">${s.split("・").map(x => `<span>${fmt(x)}</span>`).join("")}</div>` : `<div class="none">없음</div>`;
+  const hl = s => esc(s).split(it.c).join(`<b>${it.c}</b>`);
+  const kseg = (key, val) => `<span class="kseg" data-k="${key}"><button data-v="hira" class="${val === "hira" ? "on" : ""}">ひらがな</button><button data-v="kata" class="${val === "kata" ? "on" : ""}">カタカナ</button></span>`;
+  $("info").innerHTML =
+    sec("on", `<span>音読み 음독</span>${kseg("onKana", settings.onKana)}`, chips(d.on, "on", x => esc(fmtOn(x)))) +
+    sec("kun", `<span>訓読み 훈독 <em>연한 글자 = 오쿠리가나</em></span>${kseg("kunKana", settings.kunKana)}`, chips(d.kun, "kun", x => kunHTML(fmtKun(x)))) +
+    sec("w", "ことば 단어", `<div class="w">${hl(d.w || "")}<small>${esc(d.wr || "")}</small></div>`, `<div class="wk">뜻: ${esc(d.wk || "")}</div>`) +
+    sec("s", "例文 예문", `<div class="s">${hl(d.s || "")}</div>`, `<div class="sk">한글 뜻: ${esc(d.sk || "")}</div>`);
+}
+$("info").addEventListener("click", e => {
+  const k = e.target.closest(".kseg button");
+  if (k) { settings[k.parentNode.dataset.k] = k.dataset.v; saveSettings(); renderInfo(); paperSVG(); return; }
+  const b = e.target.closest("[data-reveal]"); if (!b) return; revealed.add(b.dataset.reveal); renderInfo();
+});
+function syncLearn() {
+  const on = P.item && !!meta.l[P.item.hex];
+  $("learnSw").classList.toggle("on", on); $("learnChk").classList.toggle("on", on);
+  $("learnTxt").textContent = on ? "외웠어요 ✓" : "아직 못 외웠어요";
+  $("model").classList.toggle("hide", P.test);
+  renderInfo();
+}
+function setLearn(want) {
+  if (!P.item) return;
+  const h = P.item.hex;
+  if (want === !!meta.l[h]) { toast(want ? `${P.item.c} — 이미 외운 글자예요` : `${P.item.c} — 아직 안 외운 글자예요`); return; }
+  if (want) { meta.l[h] = 1; toast(`${P.item.c} — 외운 글자에 추가했어요`); }
+  else { delete meta.l[h]; toast(`${P.item.c} — 외운 글자에서 뺐어요`); }
+  syncLearn(); saveMeta();
+}
+$("learnChk").addEventListener("click", () => { if (P.item) setLearn(!meta.l[P.item.hex]); });
+$("traceBtn").addEventListener("click", () => { settings.trace = !settings.trace; saveSettings(); paperSVG(); syncToolbar(); });
+$("testBtn").addEventListener("click", () => { P.test = !P.test; revealed.clear(); paperSVG(); syncLearn(); syncToolbar(); });
+$("pgPrev").addEventListener("click", () => goPage(-1));
+$("pgNext").addEventListener("click", () => goPage(1));
+
+let shifting = Promise.resolve();
+$("pgDel").addEventListener("click", async () => {
+  if (!P.ready || P.pages.length <= 1) return;
+  if (!(await ask(`${P.idx + 1}번째 페이지(${PAPER_NAMES[(P.pages[P.idx] || {}).paper] || "페이지"})를 삭제할까요? 되돌릴 수 없어요.`, "삭제"))) return;
+  if (saveTimer) flush();
+  const hex = P.item.hex, oldN = P.pages.length, del = P.idx;
+  const kept = P.pages.slice(); // snapshot before removal
+  P.pages.splice(del, 1); P.types.splice(del, 1);
+  // then move the following pages' saved data down one slot, in the background
+  shifting = shifting.then(async () => {
+    for (let j = del; j < oldN - 1; j++) {
+      const src = kept[j + 1];
+      let data = src ? serPage(src) : null;
+      if (!src) { try { data = await Store.get(pageKey(hex, j + 1)); } catch (e) { data = null; } }
+      if (data) Writer.put(pageKey(hex, j), data);
+      if (src) src.persisted = true;
+    }
+    Writer.put(pageKey(hex, oldN - 1), null);
+    updateMetaFor(hex);
+  });
+  // show the result right away
+  showPage(Math.min(del, P.pages.length - 1), 0);
+  toast("페이지를 삭제했어요");
+});
+$("backBtn").addEventListener("click", () => { location.hash = "g" + settings.grade; });
+$("prevBtn").addEventListener("click", () => { const it = LIST[P.item.idx - 1]; if (it) location.hash = "k-" + it.hex; });
+$("nextBtn").addEventListener("click", () => { const it = LIST[P.item.idx + 1]; if (it) location.hash = "k-" + it.hex; });
+
+/* ================= storage settings & backup ================= */
+let DL = null;
+const FileSaver = {
+  async save({ filename, data }) {
+    const mime = /\.png$/i.test(filename) ? "image/png" : "application/json";
+    const blob = data instanceof Blob ? data : new Blob([data], { type: mime });
+    try {
+      const file = new File([blob], filename, { type: mime });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file], title: filename });
+        return { status: "saved" };
+      }
+    } catch (e) { if (e && e.name === "AbortError") throw { code: "declined" }; }
+    const url = URL.createObjectURL(blob), a = document.createElement("a");
+    a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+    return { status: "saved" };
+  }
+};
+async function downloadsNS() { return FileSaver; }
+function syncStoreModal() {
+  document.querySelectorAll(".sopt").forEach(b => {
+    b.classList.toggle("on", b.dataset.where === Store.mode);
+    b.disabled = b.dataset.where === "cloud" ? !Store.cloudOK : !Store.deviceOK;
+  });
+}
+$("storeBadge").addEventListener("click", () => { syncStoreModal(); $("smodal").hidden = false; });
+$("sClose").addEventListener("click", () => { $("smodal").hidden = true; });
+async function reloadMeta() {
+  try { const m = await Store.get("meta"); meta = m ? { w: m.w || {}, l: m.l || {}, x: m.x || {} } : { w: {}, l: {}, x: {} }; } catch (e) {}
+  renderBadge(); renderHome();
+}
+document.querySelectorAll(".sopt").forEach(b => b.addEventListener("click", async () => {
+  const to = b.dataset.where; if (to === Store.mode || b.disabled) return;
+  const label = to === "device" ? "이 아이패드" : "Claude 계정";
+  if (!(await ask(`저장 위치를 ‘${label}’(으)로 바꿀까요? 지금까지의 기록을 ${label}에 복사해요.`, "바꾸기"))) return;
+  $("sHint").textContent = "복사하는 중이에요… 잠시만 기다려 주세요.";
+  try {
+    await waitIdle();
+    const from = Store.mode, data = await Store.all(from);
+    const keys = Object.keys(data).filter(isDataKey);
+    for (let i = 0; i < keys.length; i++) {
+      await Store.set(keys[i], data[keys[i]], to);
+      if (i % 10 === 0) $("sHint").textContent = `복사하는 중이에요… ${i + 1} / ${keys.length}`;
+    }
+    Store.mode = to; lsSet("kj:where", to);
+    $("sHint").textContent = `${label}에 저장하도록 바꿨어요. (${keys.length}개 항목 복사)`;
+    syncStoreModal(); await reloadMeta(); toast(`이제 ${label}에 저장돼요`);
+  } catch (e) {
+    $("sHint").textContent = "복사하지 못했어요. 저장 위치는 그대로예요. 잠시 후 다시 해 주세요.";
+  }
+}));
+$("bkExport").addEventListener("click", async () => {
+  const dl = await downloadsNS();
+  if (!dl) { toast("이 화면에서는 파일 저장을 할 수 없어요. claude.ai에서 열어 주세요.", 4000); return; }
+  try {
+    await waitIdle();
+    const data = await Store.all(), keep = {};
+    Object.keys(data).filter(isDataKey).forEach(k => keep[k] = data[k]);
+    const d = new Date(), stamp = `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, "0")}${String(d.getDate()).padStart(2, "0")}`;
+    await dl.save({ filename: `kanji-backup-${stamp}.json`, data: JSON.stringify({ app: "kanji-renshu", v: 1, at: d.toISOString(), data: keep }) });
+    toast("백업 파일을 만들었어요. ‘파일에 저장’을 골라 보관하세요.", 4000);
+  } catch (e) { if (!e || e.code !== "declined") toast("백업 파일을 만들지 못했어요.", 3500); }
+});
+$("bkImport").addEventListener("click", () => $("bkFile").click());
+$("bkFile").addEventListener("change", async e => {
+  const f = e.target.files && e.target.files[0]; e.target.value = ""; if (!f) return;
+  let j; try { j = JSON.parse(await f.text()); } catch (err) { toast("백업 파일을 읽지 못했어요.", 3500); return; }
+  if (!j || j.app !== "kanji-renshu" || !j.data) { toast("한자 연습장 백업 파일이 아니에요.", 3500); return; }
+  const keys = Object.keys(j.data).filter(isDataKey);
+  if (!(await ask(`백업 파일(${keys.length}개 항목)을 불러올까요? 같은 한자의 필기는 백업 내용으로 바뀌어요.`, "불러오기"))) return;
+  try {
+    await waitIdle();
+    for (const k of keys) await Store.set(k, j.data[k]);
+    await reloadMeta(); toast("백업을 불러왔어요");
+  } catch (err) { toast("불러오는 중에 문제가 생겼어요.", 3500); }
+});
+$("imgBtn").addEventListener("click", async () => {
+  const dl = await downloadsNS();
+  if (!dl) { toast("이 화면에서는 파일 저장을 할 수 없어요.", 3500); return; }
+  const N = 2000, c = document.createElement("canvas"); c.width = c.height = N; const x = c.getContext("2d");
+  x.fillStyle = "#fffdf8"; x.fillRect(0, 0, N, N);
+  try {
+    const svg = $("paperSvg").cloneNode(true); svg.setAttribute("xmlns", "http://www.w3.org/2000/svg"); svg.setAttribute("width", N); svg.setAttribute("height", N);
+    const img = new Image(); img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(new XMLSerializer().serializeToString(svg));
+    await img.decode(); x.drawImage(img, 0, 0, N, N);
+  } catch (err) { /* background optional */ }
+  x.drawImage(mainCv, 0, 0, N, N);
+  const blob = await new Promise(r => { try { c.toBlob(r, "image/png"); } catch (err) { r(null); } });
+  if (!blob) { toast("이미지를 만들지 못했어요.", 3000); return; }
+  const pg = P.pages[P.idx];
+  try { await dl.save({ filename: `${P.item.c}_${P.idx + 1}_${PAPER_NAMES[pg.paper] || "page"}.png`, data: blob }); toast("이미지를 저장했어요"); }
+  catch (err) { if (!err || err.code !== "declined") toast("이미지를 저장하지 못했어요.", 3000); }
+});
+
+/* ================= tests ================= */
+const qset = Object.assign({ type: "read", range: "all", count: "10" }, lsGet("kj:qset", {}));
+let Q = null;
+const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+function poolFor(g, range) {
+  return GRADE_LISTS[g].filter(it => range === "all" ? true : range === "todo" ? !meta.l[it.hex] : range === "wrong" ? !!meta.x[it.hex] : !!meta.l[it.hex]);
+}
+function syncSetup() {
+  document.querySelectorAll(".seg.qs").forEach(s => s.querySelectorAll("button").forEach(b => b.classList.toggle("on", b.dataset.v === qset[s.dataset.q])));
+  const n = poolFor(settings.grade, qset.range).length, c = +qset.count || n;
+  $("qsTitle").textContent = `${settings.grade}학년 테스트`;
+  $("qsTypeHint").textContent = qset.type === "read"
+    ? "한자의 음독·훈독, 단어 읽기, 한국어 뜻에 맞는 한자를 4개 중에서 골라요. 자동으로 채점돼요."
+    : "한국어 뜻과 단어 힌트를 보고 펜슬로 한자를 써요. 정답을 본 뒤 맞았는지 직접 표시해요.";
+  $("qsHint").textContent = n ? `이 범위에 ${n}자가 있어요 → ${Math.min(c, n)}문제를 무작위로 내요.` : "이 범위에는 한자가 없어요. 다른 범위를 골라 주세요.";
+  $("qsGo").disabled = !n;
+}
+$("testOpen").addEventListener("click", () => { syncSetup(); $("qsetup").hidden = false; });
+$("qsetup").addEventListener("click", e => {
+  const b = e.target.closest(".seg.qs button"); if (!b) return;
+  qset[b.parentNode.dataset.q] = b.dataset.v; lsSet("kj:qset", qset); syncSetup();
+});
+$("qsNo").addEventListener("click", () => { $("qsetup").hidden = true; });
+$("qsGo").addEventListener("click", () => {
+  const pool = shuffle(poolFor(settings.grade, qset.range).slice()), c = +qset.count || pool.length;
+  $("qsetup").hidden = true; startQuiz(qset.type, pool.slice(0, c));
+});
+function startQuiz(type, items) {
+  if (!items.length) return;
+  Q = { type, grade: settings.grade, items: items.map(it => ({ it })), i: 0, ok: 0 };
+  location.hash = "quiz"; if ((location.hash || "").slice(1) === "quiz") route();
+}
+function readingsOf(c, kind) {
+  const d = INFO[c] || {};
+  if (kind === "on") return (d.on || "").split("・").filter(Boolean).map(r => fmtOn(r));
+  if (kind === "kun") return (d.kun || "").split("・").filter(Boolean).map(r => fmtKun(plainKun(r)));
+  return d.wr ? [d.wr] : [];
+}
+function pick3(poolItems, getter, exclude) {
+  const out = [], seen = new Set(exclude);
+  for (const it of shuffle(poolItems.slice())) {
+    const v = getter(it); if (!v || seen.has(v)) continue;
+    seen.add(v); out.push(v); if (out.length === 3) break;
+  }
+  return out;
+}
+function makeReadQ(q) {
+  const c = q.it.c, d = INFO[c] || {}, near = GRADE_LISTS[q.it.g].concat(LIST);
+  const kinds = ["ko"]; if (d.on) kinds.push("on"); if (d.kun) kinds.push("kun"); if (d.wr) kinds.push("word");
+  const kind = kinds[Math.floor(Math.random() * kinds.length)];
+  q.kind = kind;
+  if (kind === "ko") {
+    q.ask = "이 뜻의 한자는?"; q.prompt = `<div class="qprompt ko">${esc(d.ko)}</div>`; q.answer = c; q.big = true;
+    q.choices = shuffle([c].concat(pick3(GRADE_LISTS[q.it.g], it => it.c, [c])));
+  } else if (kind === "on") {
+    const all = readingsOf(c, "on"); q.answer = all[Math.floor(Math.random() * all.length)];
+    q.ask = "음독(音読み)은?"; q.prompt = `<div class="qprompt">${c}</div>`;
+    q.choices = shuffle([q.answer].concat(pick3(near, it => { const r = readingsOf(it.c, "on"); return r[Math.floor(Math.random() * r.length)]; }, all)));
+  } else if (kind === "kun") {
+    const raw = (d.kun || "").split("・").filter(Boolean), r = raw[Math.floor(Math.random() * raw.length)];
+    const m = /\(([^)]*)\)/.exec(r), oku = m ? m[1] : "";
+    q.answer = fmtKun(plainKun(r)); q.ask = "훈독(訓読み)은?";
+    q.prompt = `<div class="qprompt">${c}<i>${esc(fmtKun(oku))}</i></div>`;
+    q.choices = shuffle([q.answer].concat(pick3(near, it => { const x = readingsOf(it.c, "kun"); return x[Math.floor(Math.random() * x.length)]; }, readingsOf(c, "kun"))));
+  } else {
+    q.answer = d.wr; q.ask = "이 단어의 읽는 법은?"; q.prompt = `<div class="qprompt word">${esc(d.w)}</div>`;
+    q.choices = shuffle([d.wr].concat(pick3(near, it => (INFO[it.c] || {}).wr, [d.wr])));
+  }
+}
+function explain(c) {
+  const d = INFO[c] || {};
+  const on = (d.on || "").split("・").filter(Boolean).map(fmtOn).join("・") || "없음";
+  const kun = (d.kun || "").split("・").filter(Boolean).map(x => kunHTML(fmtKun(x))).join("・") || "없음";
+  return `<span class="kk">${c}</span><b>${esc(d.ko || "")}</b><br>음독 <span class="jp">${esc(on)}</span> · 훈독 <span class="jp">${kun}</span><br><span class="jp">${esc(d.w || "")}</span>(${esc(d.wr || "")}) ${esc(d.wk || "")}<br><span class="jp">${esc(d.s || "")}</span> — ${esc(d.sk || "")}`;
+}
+function quizHeader() {
+  $("qTitle").textContent = Q.type === "read" ? "읽기 퀴즈" : "쓰기 시험";
+  $("qMeta").textContent = `${Q.grade}학년 · ${Math.min(Q.i + 1, Q.items.length)} / ${Q.items.length}`;
+  $("qScore").textContent = `맞음 ${Q.ok}`;
+  $("qProg").style.width = (Q.i / Q.items.length * 100) + "%";
+}
+function record(q, ok) {
+  q.ok = ok; if (ok) { Q.ok++; delete meta.x[q.it.hex]; } else meta.x[q.it.hex] = 1;
+  saveMeta();
+}
+function nextQ() { Q.i++; renderQuiz(); }
+function renderQuiz() {
+  if (!Q) return;
+  quizHeader();
+  if (Q.i >= Q.items.length) return renderResult();
+  const q = Q.items[Q.i];
+  if (Q.type === "read") {
+    if (!q.choices) makeReadQ(q);
+    $("qBody").innerHTML = `<div class="qcard"><div class="qask">${q.ask}</div>${q.prompt}
+      <div class="qchoices">${q.choices.map(c => `<button class="qch${q.big ? " big" : ""}" data-c="${esc(c)}">${esc(c)}</button>`).join("")}</div>
+      <div id="qAfter"></div></div>`;
+    $("qBody").querySelector(".qchoices").addEventListener("click", e => {
+      const b = e.target.closest(".qch"); if (!b || q.ok !== undefined) return;
+      const ok = b.dataset.c === q.answer; record(q, ok); quizHeader();
+      $("qBody").querySelectorAll(".qch").forEach(x => { x.disabled = true; if (x.dataset.c === q.answer) x.classList.add("ok"); });
+      if (!ok) b.classList.add("ng");
+      $("qAfter").innerHTML = `<div class="qcard"><div class="qverdict ${ok ? "ok" : "ng"}">${ok ? "⭕ 정답!" : "❌ 아쉬워요"}</div><div class="qexp">${explain(q.it.c)}</div><button class="btn primary" id="qNext">${Q.i + 1 < Q.items.length ? "다음 문제 →" : "결과 보기"}</button></div>`;
+      $("qNext").onclick = nextQ;
+    });
+  } else renderWriteQ(q);
+}
+function renderWriteQ(q) {
+  const d = INFO[q.it.c] || {};
+  const wordClue = (d.w || "").split(q.it.c).join("○");
+  $("qBody").innerHTML = `<div class="qcard w"><div class="qask">뜻과 힌트를 보고 한자를 써 보세요</div>
+    <div class="qwrite">
+      <div class="qclue"><div class="ko">${esc(d.ko || "")}</div>
+        <div class="wd">${esc(wordClue)}<small>${esc(d.wr || "")}</small></div>
+        <div class="sk">단어 뜻: ${esc(d.wk || "")}<br>예문: ${esc(d.sk || "")}</div>
+        <div id="qReveal"></div></div>
+      <div class="qpadwrap"><div class="qpad" id="qpad"><canvas id="qcv"></canvas></div>
+        <div class="row" id="qPadBtns"><button class="btn sm" id="qUndo">↶ 한 획 지우기</button><button class="btn sm" id="qClear">모두 지우기</button><button class="btn primary" id="qShow">정답 보기</button></div></div>
+    </div></div>`;
+  setupPad();
+  $("qShow").onclick = () => {
+    const ov = document.createElement("div"); ov.className = "qover"; ov.textContent = q.it.c;
+    ov.style.fontSize = Math.round($("qpad").clientWidth * 0.82) + "px"; $("qpad").appendChild(ov);
+    $("qReveal").innerHTML = `<div class="qexp">${explain(q.it.c)}</div>`;
+    $("qPadBtns").innerHTML = `<span class="qask">빨간 글자가 정답이에요. 내 글씨와 비교해 보세요 →</span><button class="btn" id="qNg" style="border-color:var(--accent);color:var(--accent)">❌ 틀렸어요</button><button class="btn" id="qOk" style="background:var(--ok);border-color:var(--ok);color:#fff">⭕ 맞았어요</button>`;
+    const fin = ok => { record(q, ok); nextQ(); };
+    $("qOk").onclick = () => fin(true); $("qNg").onclick = () => fin(false);
+  };
+}
+let pad = null;
+function setupPad() {
+  const box = $("qpad"), cv = $("qcv"), ctx = cv.getContext("2d");
+  const size = Math.floor(Math.min(460, window.innerWidth - 60, window.innerHeight - 260));
+  box.style.width = box.style.height = Math.max(240, size) + "px";
+  const dpr = Math.min(window.devicePixelRatio || 1, 2), px = Math.round(Math.max(240, size) * dpr);
+  cv.width = cv.height = px;
+  pad = { strokes: [], cur: null, ctx, scale: px / 1000 };
+  const draw = () => {
+    ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, px, px); ctx.setTransform(pad.scale, 0, 0, pad.scale, 0, 0);
+    for (const st of pad.strokes.concat(pad.cur ? [pad.cur] : [])) drawPath(ctx, st);
+  };
+  let r = null;
+  const add = ev => {
+    const x = (ev.clientX - r.left) / r.width * 1000, y = (ev.clientY - r.top) / r.height * 1000, p = pressureOf(ev), a = pad.cur.pts, n = a.length;
+    if (n && Math.hypot(x - a[n - 3], y - a[n - 2]) < 0.8) return;
+    a.push(x, y, n ? a[n - 1] * 0.55 + p * 0.45 : p);
+  };
+  cv.onpointerdown = ev => {
+    if (pad.cur || (ev.pointerType === "touch" && settings.pencilOnly)) return;
+    ev.preventDefault(); try { cv.setPointerCapture(ev.pointerId); } catch (e) {}
+    r = cv.getBoundingClientRect(); pad.cur = { k: "brush", c: "#1d1b18", w: 22, pts: [], id: ev.pointerId }; add(ev); draw();
+  };
+  cv.onpointermove = ev => {
+    if (!pad.cur || ev.pointerId !== pad.cur.id) return;
+    const l = ev.getCoalescedEvents ? ev.getCoalescedEvents() : []; (l.length ? l : [ev]).forEach(add); draw();
+  };
+  cv.onpointerup = cv.onpointercancel = ev => { if (!pad.cur || ev.pointerId !== pad.cur.id) return; pad.strokes.push(pad.cur); pad.cur = null; draw(); };
+  cv.addEventListener("touchstart", e => { if (e.touches[0] && e.touches[0].touchType === "stylus") e.preventDefault(); }, { passive: false });
+  $("qUndo").onclick = () => { pad.strokes.pop(); draw(); };
+  $("qClear").onclick = () => { pad.strokes = []; draw(); };
+}
+function renderResult() {
+  $("qProg").style.width = "100%";
+  const wrong = Q.items.filter(q => !q.ok), right = Q.items.filter(q => q.ok);
+  $("qBody").innerHTML = `<div class="qres"><div class="qask">${Q.grade}학년 ${Q.type === "read" ? "읽기 퀴즈" : "쓰기 시험"} 결과</div>
+    <div class="big">${Q.ok} / ${Q.items.length}</div>
+    <div class="grid2">${Q.items.map(q => `<button class="t ${q.ok ? "ok" : "ng"}" data-hex="${q.it.hex}"><span>${q.ok ? "⭕" : "❌"}</span>${q.it.c}</button>`).join("")}</div>
+    <div class="qask">글자를 누르면 그 한자 연습장으로 가요.</div>
+    <div class="row" style="justify-content:center">
+      ${wrong.length ? `<button class="btn primary" id="qRetry">틀린 ${wrong.length}자 다시 풀기</button>` : ""}
+      ${right.length ? `<button class="btn" id="qLearn">맞은 ${right.length}자 '외웠어요' 표시</button>` : ""}
+      <button class="btn" id="qHome">목록으로</button></div></div>`;
+  $("qBody").querySelector(".grid2").addEventListener("click", e => { const b = e.target.closest("[data-hex]"); if (b) location.hash = "k-" + b.dataset.hex; });
+  if (wrong.length) $("qRetry").onclick = () => startQuiz(Q.type, shuffle(wrong.map(q => q.it)));
+  if (right.length) $("qLearn").onclick = () => { right.forEach(q => meta.l[q.it.hex] = 1); saveMeta(); toast(`${right.length}자를 외운 글자로 표시했어요`); $("qLearn").disabled = true; };
+  $("qHome").onclick = () => { Q = null; location.hash = "g" + settings.grade; };
+}
+$("qBack").addEventListener("click", async () => {
+  if (Q && Q.i < Q.items.length && Q.i > 0 && !(await ask("테스트를 그만둘까요? 지금까지 푼 결과는 틀린 글자 기록에 남아요.", "그만두기"))) return;
+  Q = null; location.hash = "g" + settings.grade;
+});
+
+/* ================= routing ================= */
+function route() {
+  const h = (location.hash || "").slice(1);
+  const mk = /^k-([0-9a-f]+)$/.exec(h), mg = /^g([1-6])$/.exec(h);
+  $("quiz").hidden = true;
+  if (mk && BY_HEX[mk[1]]) { openKanji(mk[1]); return; }
+  if (saveTimer) flush();
+  if (h === "quiz" && Q) { P.item = null; P.loadToken++; $("practice").hidden = true; $("home").hidden = true; $("quiz").hidden = false; renderQuiz(); return; }
+  P.item = null; P.loadToken++;
+  if (mg) { settings.grade = mg[1]; saveSettings(); }
+  $("practice").hidden = true; $("home").hidden = false;
+  renderHome();
+}
+window.addEventListener("hashchange", route);
+window.addEventListener("beforeunload", e => { if (saveTimer) flush(); if (!Writer.idle()) { e.preventDefault(); e.returnValue = ""; } });
+
+/* ================= boot ================= */
+buildToolbar(); syncToolbar(); renderBadge();
+const ready = (async () => {
+  await Store.init(); renderBadge();
+  if (Store.mode === "none") { toast("이 환경에서는 저장이 안 돼요. Safari에서 열어 주세요.", 5000); return; }
+  try {
+    const m = await Store.get("meta");
+    if (m) meta = { w: m.w || {}, l: m.l || {}, x: m.x || {} };
+  } catch (e) { toast("기록을 불러오지 못했어요. 잠시 후 새로 열어 주세요.", 4500); }
+  if (!$("home").hidden) renderHome();
+  else if (P.item) { syncLearn(); }
+})();
+route();
+if ("serviceWorker" in navigator && location.protocol !== "file:") {
+  window.addEventListener("load", () => { navigator.serviceWorker.register("sw.js").catch(() => {}); });
+}
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (!$("home").hidden) renderGrid(); });
+})();
+</script>
+</body>
+</html>

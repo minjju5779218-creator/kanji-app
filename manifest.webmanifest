@@ -1,0 +1,17 @@
+{
+  "name": "한자 연습장 · 漢字れんしゅう帳",
+  "short_name": "한자 연습장",
+  "description": "일본 초등 교육한자 1,026자를 애플펜슬로 쓰며 공부하는 앱",
+  "lang": "ko",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f3efe7",
+  "theme_color": "#f3efe7",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
