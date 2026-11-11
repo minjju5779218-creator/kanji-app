@@ -1,6 +1,6 @@
 // 한자 연습장 — offline support
 // When you change index.html, bump VERSION so the iPad picks up the new version.
-const VERSION = "kanji-v1";
+const VERSION = "kanji-v2";
 const CORE = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png", "./apple-touch-icon.png"];
 
 self.addEventListener("install", (e) => {
